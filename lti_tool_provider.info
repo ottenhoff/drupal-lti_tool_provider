@@ -1,0 +1,12 @@
+name = LTI Tool Provider
+description = An LTI Tool Provider module for LMS/Drupal integration.
+core = 7.x
+version = 7.x-1.0-alpha7
+project = lti_tool_provider
+files[] = lti_tool_provider.module
+files[] = lti_tool_provider.install
+files[] = LTIToolProviderOAuthDataStore.class.php
+project status url = "http://code.ceit.uq.edu.au/features/fserver"
+dependencies[] = entity
+dependencies[] = field
+dependencies[] = libraries

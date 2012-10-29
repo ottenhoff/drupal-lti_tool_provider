@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the LTI Tool Provider module.
+ */
+function lti_tool_provider_install()  {
+  variable_set('lti_tool_provider_bundle', 'none:None');
+  variable_set('lti_tool_provider_global_role_array', '');
+  variable_set('lti_tool_provider_group_role_array', '');
+  variable_set('lti_tool_provider_provision_groups', '1');
+  variable_set('lti_tool_provider_name_field_setting', '');
+  variable_set('lti_tool_provider_context_mapping_setting', '');
+  if (module_exists('og') == '1') {
+    // set the default permissions for all existing group bundles
+    foreach (og_get_all_group_bundle() as $entity => $bundles) {
+      foreach ($bundles as $key => $bundle) {
+        $roles = og_roles($entity, $bundle);
+        $rid = array_search(OG_ADMINISTRATOR_ROLE, $roles);
+        og_role_grant_permissions($rid, array('populate membership'));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function lti_tool_provider_schema() {
+  $schema = array();
+  // The name of the table can be any name we choose. However, namespacing the
+  // table with the module name is best practice.
+  $schema['ltitp_consumer_entity'] = array(
+    'description' => 'The base table for our ltitp_consumer_entity.',
+    'fields' => array(
+      'ltitp_consumer_entity_id' => array(
+        'description' => 'Primary key of the ltitp_consumer_entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'ltitp_consumer_entity_key' => array(
+        'description' => 'The key for LTITP Consumer',
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => TRUE,
+      ),
+      'ltitp_consumer_entity_secret' => array(
+        'description' => 'The secret for LTITP Consumer',
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => TRUE,
+      ),
+      'ltitp_consumer_entity_consumer' => array(
+        'description' => 'A representive name of LTITP Consumer',
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => TRUE,
+      ),
+      'ltitp_consumer_entity_domain' => array(
+      'description' => 'A representive name of the domain',
+      'type' => 'varchar',
+      'length' => 512,
+      'not null' => TRUE,
+      ),
+      'ltitp_consumer_entity_dummy_pref' => array(
+      'description' => 'A representive name of the domain',
+      'type' => 'int',
+      'size' => 'tiny',
+      'not null' => TRUE,
+      ),
+      'date_joined' => array(
+      'description' => 'The Unix timestamp of the entity creation time.',
+      'type' => 'int',
+      'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('ltitp_consumer_entity_id'),
+  );
+  return $schema;
+}
+
+/**
+ * Implements hook_enable().
+ */
+function lti_tool_provider_enable() {
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}
+
+/**
+ * Implements hook_uninstall().
+ * http://api.drupal.org/api/function/hook_uninstall/7
+ */
+function lti_tool_provider_uninstall() {
+  variable_del('lti_tool_provider_bundle');
+  variable_del('lti_tool_provider_global_role_array');
+  variable_del('lti_tool_provider_group_role_array');
+  variable_del('lti_tool_provider_provision_groups');
+  variable_del('lti_tool_provider_name_field_setting');
+  variable_del('lti_tool_provider_context_mapping_setting');
+}
