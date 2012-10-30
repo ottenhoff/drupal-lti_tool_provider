@@ -1614,6 +1614,7 @@ function ltitp_consumer_entity_view($entity, $view_mode = 'tweaky') {
   );
   global $language ;
   $langcode = $language->language ;
+  $entity->content['#language'] = $langcode;
   module_invoke_all('entity_view', $entity, $entity_type, $view_mode,
   $langcode);
   drupal_alter(array('ltitp_consumer_entity_view', 'entity_view'),
