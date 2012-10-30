@@ -1193,7 +1193,7 @@ function retrieve_consumer_secrets() {
   $entites = ltitp_consumer_entity_load_multiple();
   $list = array();
   foreach ($entites as $entity) {
-    $list[] = $entity ->ltitp_consumer_entity_secret ;
+    $list[] = $entity ->ltitp_consumer_entity_secret;
   }
   return $list;
 }
@@ -1612,8 +1612,8 @@ function ltitp_consumer_entity_view($entity, $view_mode = 'tweaky') {
     '#title' => t('Date Joined'),
     '#markup' => format_date($entity->date_joined),
   );
-  global $language ;
-  $langcode = $language->language ;
+  global $language;
+  $langcode = $language->language;
   $entity->content['#language'] = $langcode;
   module_invoke_all('entity_view', $entity, $entity_type, $view_mode,
   $langcode);
