@@ -9,7 +9,10 @@ function lti_tool_provider_install()  {
   variable_set('lti_tool_provider_global_role_array', '');
   variable_set('lti_tool_provider_group_role_array', '');
   variable_set('lti_tool_provider_provision_groups', '1');
-  variable_set('lti_tool_provider_name_field_setting', '');
+  variable_set('lti_tool_provider_name_field_setting', array('lis_person_name_given' => 'none', 
+    'lis_person_name_family' => 'none', 
+    'lis_person_name_full' => 'none',
+    ));
   variable_set('lti_tool_provider_context_mapping_setting', '');
   if (module_exists('og') == '1') {
     // set the default permissions for all existing group bundles
