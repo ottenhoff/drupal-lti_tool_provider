@@ -1,7 +1,0 @@
-This software was developed as a project of the Centre for Educational Innovation and Technology (The University of Queensland)
-
-Contributors
-
-John Zornig <j.zornig@uq.edu.au>
-Mabel Koh <mabel_xqw@hotmail.com>
-Tan Kee Hock <tkh3600@hotmail.com>
