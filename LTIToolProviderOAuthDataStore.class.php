@@ -12,11 +12,11 @@ else {
 
   class LTIToolProviderOAuthDataStore extends OAuthDataStore {
     function lookup_consumer($consumer_key) {
-      $query = new EntityFieldQuery();    
+      $query = new EntityFieldQuery();
       $result = $query->entityCondition('entity_type', 'lti_tool_provider_consumer')
       ->propertyCondition('lti_tool_provider_consumer_key', $consumer_key, '=')
       ->addMetaData('account', user_load(1))
-      ->execute();    
+      ->execute();
       if (isset($result['lti_tool_provider_consumer'])) {
         $consumer_ids = array_keys($result['lti_tool_provider_consumer']);
         $consumers = entity_load('lti_tool_provider_consumer', $consumer_ids);

@@ -194,7 +194,7 @@ function lti_tool_provider_assign_global_roles_to_user($lti_roles, $uid) {
  *
  * @param string $lti_roles_str
  *   A string containing the lti roles from the lti launch parameters.
- *   
+ *
  * @return array
  *   The found roles.
  */
@@ -236,7 +236,7 @@ function lti_tool_provider_is_basic_lti_request() {
 
 /**
  * Create an options array for a select list of group bundles.
- * 
+ *
  * @return array
  */
 function lti_tool_provider_get_group_bundles()  {
@@ -328,7 +328,7 @@ function lti_tool_provider_retrieve_entity_field_types($group_bundle) {
  *
  * @param $filter
  *   The string which represent the type of field to retrieve
- *   
+ *
  * @return
  *   An array containing all the retrieved fields
  */
@@ -432,7 +432,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
 
 /**
  * Add a consumer
- * 
+ *
  * @return array
  *   A consumer add form.
  */
@@ -467,7 +467,7 @@ function lti_tool_provider_consumer_delete($entity) {
  *
  * @param $id
  *   The id of the consumer entity to be loaded.
- * 
+ *
  * @param boolean $reset
  *   Wether to reset the cache.
  *
@@ -482,10 +482,10 @@ function lti_tool_provider_consumer_load($id = NULL, $reset = FALSE) {
 
 /**
  * Load consumers from an array of ids.
- * 
+ *
  * @param array $ids
- *   An array of ids to load.  
- * @param array $conditions 
+ *   An array of ids to load.
+ * @param array $conditions
  * @param boolean $reset
  *   Wether to reset the cache.
  */
@@ -535,7 +535,7 @@ function lti_tool_provider_retrieve_consumer_secrets() {
 
 /**
  * Retrieve the domain of a consumer given the consumer key.
- * 
+ *
  * @param string $key
  * @return string
  */
@@ -628,7 +628,7 @@ function lti_tool_provider_create_all_dummy_accounts() {
 
 /**
  * Remove dummy account for a domain.
- * 
+ *
  * @param string $domain
  * @return multitype:NULL
  */
@@ -661,9 +661,9 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
 
 /**
  * Create a dummy account for a domain
- * 
+ *
  * @param string $domain
- * 
+ *
  * @return integer
  *   The account uid.
  */
@@ -692,9 +692,9 @@ function lti_tool_provider_create_dummy_account($domain) {
 
 /**
  * Translate boolean to On/Off.
- * 
+ *
  * @param integer $bool
- * 
+ *
  * @return string
  */
 function lti_tool_provider_trans_bool($bool) {
@@ -708,7 +708,7 @@ function lti_tool_provider_trans_bool($bool) {
 
 /**
  * List columns added by other modules to the consumer.
- * 
+ *
  * @return array
  */
 function lti_tool_provider_get_extra_columns() {
@@ -725,9 +725,9 @@ function lti_tool_provider_get_extra_columns() {
 
 /**
  * Get the column descriptions.
- * 
+ *
  * @param unknown_type $col
- * 
+ *
  * @return string
  *   The description.
  */
@@ -773,7 +773,7 @@ function lti_tool_provider_entity_info() {
 
 /**
  * Get the url to view a consumer.
- * 
+ *
  * @param unknown_type $consumer
  * @return multitype:string
  */
