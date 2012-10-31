@@ -63,3 +63,15 @@ by LTI Tool Provider.
 
 custom_destination defines a landing page path, if provided it will override the default (home page or group node) landing page.
 custom_title defines an alternate course/group title, if provided, it will be used as the group title when provisioning groups.
+
+This software was developed as a project of the Centre for Educational Innovation and Technology (The University of Queensland)
+
+Contributors
+
+John Zornig <j.zornig@uq.edu.au> 
+Mabel Koh <mabel_xqw@hotmail.com>
+Tan Kee Hock <tkh3600@hotmail.com>
+
+Initial reviewers
+scottrigby <scottrigby@145945.no-reply.drupal.org>
+mradcliffe <mradcliffe@157079.no-reply.drupal.org>

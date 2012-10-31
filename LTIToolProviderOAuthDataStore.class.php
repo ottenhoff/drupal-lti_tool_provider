@@ -13,15 +13,15 @@ else {
   class LTIToolProviderOAuthDataStore extends OAuthDataStore {
     function lookup_consumer($consumer_key) {
       $query = new EntityFieldQuery();    
-      $result = $query->entityCondition('entity_type', 'ltitp_consumer_entity')
-      ->propertyCondition('ltitp_consumer_entity_key', $consumer_key, '=')
+      $result = $query->entityCondition('entity_type', 'lti_tool_provider_consumer')
+      ->propertyCondition('lti_tool_provider_consumer_key', $consumer_key, '=')
       ->addMetaData('account', user_load(1))
       ->execute();    
-      if (isset($result['ltitp_consumer_entity'])) {
-        $consumer_ids = array_keys($result['ltitp_consumer_entity']);
-        $consumers = entity_load('ltitp_consumer_entity', $consumer_ids);
+      if (isset($result['lti_tool_provider_consumer'])) {
+        $consumer_ids = array_keys($result['lti_tool_provider_consumer']);
+        $consumers = entity_load('lti_tool_provider_consumer', $consumer_ids);
         $consumer_entity = reset($consumers);
-        $consumer = new OAuthConsumer($consumer_key, $consumer_entity->ltitp_consumer_entity_secret, NULL);
+        $consumer = new OAuthConsumer($consumer_key, $consumer_entity->lti_tool_provider_consumer_secret, NULL);
       }
       else {
         $consumer = new OAuthConsumer($consumer_key, NULL, NULL);
