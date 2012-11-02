@@ -5,7 +5,7 @@ Example LTI compliant LMSs are Blackboard Learn, Moodle and Sakai.
 Installation
 Download and place the module in your sites/all/modules or other suitable directory. 
 Download the module dependencies, http://drupal.org/project/entity and http://drupal.org/project/libraries
-Download the OAuth.php library file http://oauth.googlecode.com/svn/code/php/OAuth.php and place it in sites/all/libraries/oauth/
+Download the OAuth.php library file https://github.com/juampy72/OAuth-PHP and place it in sites/all/libraries/oauth/
 Enable the LTI Tool Provider module and optionally the LTI Tool Provider Outcomes and LTI Tool Provider Memberships submodules.
 
 Administrative settings admin/lti_tool_provider
