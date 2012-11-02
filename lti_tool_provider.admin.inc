@@ -956,12 +956,12 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
   $entity->lti_tool_provider_consumer_dummy_pref = $form_state['values']['lti_tool_provider_consumer_dummy_pref'];
   if ($form_state['values']['lti_tool_provider_consumer_dummy_pref']) {
     lti_tool_provider_create_dummy_account($form_state['values']['lti_tool_provider_consumer_domain']);
-    drupal_set_message(t('Dummy user has been created'));
+    drupal_set_message(t('Dummy user has been created.'));
   }
   else {
     if ($form_state['values']['lti_tool_provider_consumer_id'] != 0) {
       lti_tool_provider_remove_dummy_account($form_state['values']['lti_tool_provider_consumer_domain']);
-      drupal_set_message(t('Dummy user has been removed'));
+      drupal_set_message(t('Dummy user has been removed.'));
     }
   }
   field_attach_submit('lti_tool_provider_consumer', $entity, $form, $form_state);
