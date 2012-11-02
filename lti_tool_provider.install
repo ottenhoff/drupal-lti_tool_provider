@@ -27,16 +27,6 @@ function lti_tool_provider_install() {
     'lis_person_name_full' => 'none',
   ));
   variable_set('lti_tool_provider_group_mapping', '');
-  if (module_exists('og') == '1') {
-    // set the default permissions for all existing group bundles
-    foreach (og_get_all_group_bundle() as $entity => $bundles) {
-      foreach ($bundles as $key => $bundle) {
-        $roles = og_roles($entity, $bundle);
-        $rid = array_search(OG_ADMINISTRATOR_ROLE, $roles);
-        og_role_grant_permissions($rid, array('populate membership'));
-      }
-    }
-  }
 }
 
 /**
