@@ -7,7 +7,7 @@
 
 /**
  * LTI launch.
- * 
+ *
  * Implements the [base_url]/lti path which is called to launch the
  * tool from the LMS
  *  - Verifies the request using OAuth and adds the lti context_info
@@ -17,6 +17,8 @@
  *  - If OG is configured a course may be provisioned from the
  *    context_info and group roles are mapped
  *  - Finally the destination is calculated and user is redirected there.
+ *  
+ *  @return string
  */
 function lti_tool_provider_launch() {
   global $user;
@@ -323,10 +325,13 @@ function lti_tool_provider_info() {
 /**
  * Menu page callback.
  *
- * Configure settings for mapping user attributes from the LTI context variables.
+ * Configure settings for mapping user attributes from the
+ * LTI context variables.
  *
  * @param array $form
  * @param array $form_state
+ *
+ * @return array
  */
 function lti_tool_provider_user_attributes($form, &$form_state) {
   $form['description'] = array(
@@ -663,9 +668,9 @@ function lti_tool_provider_group_mapping_select_callback($form, &$form_state) {
 
 /**
  * Validation callback.
- * 
- * @param unknown $form
- * @param unknown $form_state
+ *
+ * @param array $form
+ * @param array $form_state
  */
 function lti_tool_provider_group_mapping_validate($form, &$form_state) {
   $entity_bundle = $form_state['values']['bundle'];
@@ -687,7 +692,7 @@ function lti_tool_provider_group_mapping_validate($form, &$form_state) {
         $check_isset_context_id = TRUE;
       }
       $value = $form_state['input']['mapping'][$key]['attribute'];
-      isset($counters[$value]) ? $counters[$value]++  : 0;
+      $counters[$value]++;
     }
   }
   foreach ($counters as $counter => $count) {
@@ -761,7 +766,15 @@ function lti_tool_provider_consumers_admin() {
     $content['entity_table'] = array(
       '#theme' => 'table',
       '#rows' => array(),
-      '#header' => array(t('ID'), t('Consumer'), t('Key'), t('Secret'), t('Domain'), t('Dummy Account'), t('Date Joined')),
+      '#header' => array(
+        t('ID'), 
+        t('Consumer'), 
+        t('Key'), 
+        t('Secret'), 
+        t('Domain'), 
+        t('Dummy Account'), 
+        t('Date Joined')
+      ),
     );
     $loop_counter = 0;
     foreach ($entities as $entity) {
@@ -816,6 +829,7 @@ function lti_tool_provider_consumers_admin() {
  * @param array $form_state
  * @param object $entity
  *   The consumer entity to display.
+ *
  * @return array
  *   The form array.
  */
@@ -985,7 +999,7 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
  * @param array $form
  * @param array $form_state
  */
-function lti_tool_provider_consumer_edit_delete($form , &$form_state) {
+function lti_tool_provider_consumer_edit_delete($form, &$form_state) {
   $entity = $form_state['values']['lti_tool_provider_consumer'];
   lti_tool_provider_remove_dummy_account($entity->lti_tool_provider_consumer_domain);
   lti_tool_provider_consumer_delete($entity);
@@ -1002,6 +1016,7 @@ function lti_tool_provider_consumer_edit_delete($form , &$form_state) {
  * @param object $entity
  *   The consumer to view.
  * @param string $view_mode
+ *
  * @return array
  *   The content array from the entity.
  */

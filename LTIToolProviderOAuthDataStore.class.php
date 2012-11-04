@@ -12,10 +12,12 @@ else {
   require_once($library['library path'] . '/OAuth.php');
 
   class LTIToolProviderOAuthDataStore extends OAuthDataStore {
-    
+
     /**
-     * 
+     * Find a consumer matching a key.
+     *
      * @param string $consumer_key
+     *
      * @return OAuthConsumer
      */
     function lookup_consumer($consumer_key) {
@@ -37,10 +39,12 @@ else {
     }
 
     /**
-     * 
+     * Lookup a token.
+     *
      * @param OAuthConsumer $consumer
      * @param string $token_type
      * @param OAuthToken $token
+     *
      * @return OAuthToken
      */
     function lookup_token($consumer, $token_type, $token) {
@@ -48,20 +52,25 @@ else {
     }
 
     /**
-     * 
+     * Lookup a nonce.
+     *
      * @param OAuthConsumer $consumer
      * @param OAuthToken $token
      * @param string $nonce
      * @param integer $timestamp
+     *
      * @return NULL
      */
     function lookup_nonce($consumer, $token, $nonce, $timestamp) {
       return NULL;
     }
+
     /**
-     * 
+     * Get a new request token.
+     *
      * @param OAuthConsumer $consumer
      * @param string $callback
+     *
      * @return NULL
      */
     function new_request_token($consumer, $callback = NULL) {
@@ -70,10 +79,12 @@ else {
     }
 
     /**
-     * 
+     * Get a new access token.
+     *
      * @param OAuthToken $token
      * @param OAuthConsumer $consumer
      * @param string $verifier
+     *
      * @return NULL
      */
     function new_access_token($token, $consumer, $verifier = NULL) {

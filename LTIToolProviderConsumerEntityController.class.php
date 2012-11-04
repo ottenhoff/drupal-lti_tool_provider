@@ -14,9 +14,10 @@ extends DrupalEntityControllerInterface {
 class LTIToolProviderConsumerEntityController
 extends DrupalDefaultEntityController
 implements LTIToolProviderConsumerEntityControllerInterface {
-  
+
   /**
-   * 
+   * Create a consumer.
+   *
    * @return object
    */
   public function create() {
@@ -35,8 +36,10 @@ implements LTIToolProviderConsumerEntityControllerInterface {
   }
 
   /**
-   * 
+   * Save a consumer.
+   *
    * @param object $entity
+   *
    * @return unknown|boolean
    */
   public function save($entity) {
@@ -73,7 +76,8 @@ implements LTIToolProviderConsumerEntityControllerInterface {
   }
 
   /**
-   * 
+   * Delete a consumer.
+   *
    * @param object $entity
    */
   public function delete($entity) {
@@ -81,8 +85,10 @@ implements LTIToolProviderConsumerEntityControllerInterface {
   }
 
   /**
-   * 
+   * Delete multiple consumers.
+   *
    * @param array $entities
+   *
    * @throws Exception
    */
   public function delete_multiple($entities) {
