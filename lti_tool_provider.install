@@ -22,7 +22,8 @@ function lti_tool_provider_install() {
   ));
   variable_set('lti_tool_provider_group_role_array', '');
   variable_set('lti_tool_provider_provision_groups', '0');
-  variable_set('lti_tool_provider_user_attribute_mapping', array('lis_person_name_given' => 'none',
+  variable_set('lti_tool_provider_user_attribute_mapping', array(
+    'lis_person_name_given' => 'none',
     'lis_person_name_family' => 'none',
     'lis_person_name_full' => 'none',
   ));
@@ -95,7 +96,6 @@ function lti_tool_provider_enable() {
 
 /**
  * Implements hook_uninstall().
- * http://api.drupal.org/api/function/hook_uninstall/7
  */
 function lti_tool_provider_uninstall() {
   variable_del('lti_tool_provider_group_mapping_bundle');

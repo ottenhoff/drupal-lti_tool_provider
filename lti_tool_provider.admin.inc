@@ -6,30 +6,33 @@
  */
 
 /**
- * Implements the [base_url]/lti path which is called to launch the tool from the LMS
- *  - Verifies the request using OAuth and adds the lti context_info to the session
+ * Implements the [base_url]/lti path which is called to launch the
+ * tool from the LMS
+ *  - Verifies the request using OAuth and adds the lti context_info
+ *    to the session
  *  - Authenticates the user, possibly after provisioning the account
  *  - Authorises the user via global role mapping
- *  - If OG is configured a course may be provisioned from the context_info and group roles are mapped
+ *  - If OG is configured a course may be provisioned from the 
+ *    context_info and group roles are mapped
  *  - Finally the destination is calculated and user is redirected there.
  */
 function lti_tool_provider_launch() {
   global $user;
-  // If not an LTI launch request, then ignore
+  // If not an LTI launch request, then ignore.
   if (!lti_tool_provider_is_basic_lti_request()) {
     drupal_set_message(t('Not a LTI request.'), 'info');
     return 'Error: Not a LTI request.';
   }
-  // Insure we have a valid context
+  // Insure we have a valid context.
   if (empty($_REQUEST['oauth_consumer_key'])) {
     unset($_SESSION['lti_tool_provider_context_info']);
     drupal_set_message(t('Not a valid LTI context.'), 'info');
     return 'Error: Invalid context. Missing oauth_consumer_key in request';
   }
-  // Begin a new session based on this LTI launch request
+  // Begin a new session based on this LTI launch request.
   drupal_session_start();
   $oauth_consumer_key = $_REQUEST["oauth_consumer_key"];
-  // Verify the message signature
+  // Verify the message signature.
   $store = new LTIToolProviderOAuthDataStore();
   $server = new OAuthServer($store);
   $method = new OAuthSignatureMethod_HMAC_SHA1();
@@ -37,12 +40,12 @@ function lti_tool_provider_launch() {
   $request = OAuthRequest::from_request();
   try {
     $server->verify_request($request);
-    // This is a LTI launch request
+    // This is a LTI launch request.
   } catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
     return 'Error: Invalid context, OAuth failure.';
   }
-  // Collect the launch information for later storage in the session
+  // Collect the launch information for later storage in the session.
   $launch_info = $request->get_parameters();
   $domain = lti_tool_provider_retrieve_consumer_domain($oauth_consumer_key);
   if (isset($launch_info['context_id']) && isset($launch_info['user_id'])) {
@@ -51,27 +54,28 @@ function lti_tool_provider_launch() {
   else {
     $lti_user = 'lti_user' . $domain;
   }
-  // Revalidate incoming user
+  // Revalidate incoming user.
   if ($user->uid > 0 && $user->name != $lti_user) {
-    // Log out prior user and clear session, retaining lti session variables
+    // Log out prior user and clear session, retaining lti session variables.
     watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
     module_invoke_all('user_logout', $user);
-    // Destroy the current session, and reset $user to the anonymous user
+    // Destroy the current session, and reset $user to the anonymous user.
     session_destroy();
     drupal_session_start();
     drupal_set_message(t('Logged current user out.'), 'info');
   }
   if ($user->uid == 0) {
-    // Unauthenticated so create user if necessary
+    // Unauthenticated so create user if necessary.
     if ($account = user_load_by_name($lti_user)) {
       // User exists
       if ($account->uid == 1) {
+        // User 1 must use drupal authentication.
         drupal_set_message(t('Admin account must use Drupal authentication.'), 'error');
-        return;  // User 1 must use drupal authentication
+        return;
       }
     }
     else {
-      // Provision a user account for $lti_user
+      // Provision a user account for $lti_user.
       if (!isset($launch_info['lis_person_contact_email_primary'])) {
         if ($domain == '') {
           $email = $lti_user . '@example.com';
@@ -108,13 +112,18 @@ function lti_tool_provider_launch() {
   else {
     $account = user_load($user->uid);
   }
-  // $account is the $lti_user
-  // Map Drupal global roles based on the user LTI role
+  // $account is the $lti_user.
+  // Map Drupal global roles based on the user LTI role.
   if (isset($launch_info['roles'])) {
     lti_tool_provider_assign_global_roles_to_user($launch_info['roles'], $account->uid);
   }
   $destination = '';
-  // Map Group roles based on the user LTI role
+  // If unauthenticated, log user in.
+  if ($user->uid == 0) {
+    $form_state = array('uid' => $account->uid);
+    user_login_submit(array(), $form_state);
+  }
+  // Map Group roles based on the user LTI role.
   if (module_exists('og')) {
     $selected_group_bundle = variable_get('lti_tool_provider_group_mapping_bundle');
     if ($selected_group_bundle != 'none:None') {
@@ -123,10 +132,8 @@ function lti_tool_provider_launch() {
       // Find the group that matches the lti context_label.
       $course_found = FALSE;
       list($group_entity, $group_bundle) = explode(':', variable_get('lti_tool_provider_group_mapping_bundle'));
-      //     $fields = lti_tool_provider_retrieve_entity_field_types($selected_group_bundle);
-      $saved_settings = variable_get('lti_tool_provider_group_mapping' , array());
+      $saved_settings = variable_get('lti_tool_provider_group_mapping', array());
       $mapping_field = $saved_settings['context_id'];
-
       foreach (og_get_all_group($group_entity) as $key => $group_id) {
         $group_wrapper = entity_metadata_wrapper($group_entity, $group_id);
         $fields = $group_wrapper->getPropertyInfo();
@@ -136,7 +143,11 @@ function lti_tool_provider_launch() {
           $launch_info['course_entity_eid'] = $group_id;
           // Found the group that matches the context_id. Add the user to the group.
           if (!array_key_exists($group_entity, $users_groups) || !in_array($group_id, $users_groups[$group_entity])) {
-            og_group($group_entity, $group_id, array('entity_type' => 'user', 'entity' => $account->uid, 'field_name' => FALSE, 'state' => OG_STATE_ACTIVE));
+            og_group($group_entity, $group_id, array('entity_type' => 'user',
+              'entity' => $account->uid,
+              'field_name' => FALSE,
+              'state' => OG_STATE_ACTIVE,
+            ));
           }
           if (isset($launch_info['roles'])) {
             $found_roles = lti_tool_provider_search_roles($launch_info['roles']);
@@ -146,11 +157,12 @@ function lti_tool_provider_launch() {
           }
         }
       }
-      // Provision group
-      // FIX THIS does not cope with non-node group bundles
+      // Provision group.
+      // FIX THIS does not cope with non-node group bundles.
       if (!$course_found && ($launch_info['context_id'] != NULL) && (variable_get('lti_tool_provider_provision_groups') == 1) && (user_access('create ' . $group_bundle . ' content', $account))) {
         $node = new stdClass();
         $node->type = $group_bundle;
+        $node->language = LANGUAGE_NONE;
         node_object_prepare($node);
         $saved_settings = variable_get('lti_tool_provider_group_mapping' , array());
         foreach ($saved_settings as $variable => $field) {
@@ -180,14 +192,9 @@ function lti_tool_provider_launch() {
       }
     }
   }
-  // If unauthenticated, log user in
-  if ($user->uid == 0) {
-    $form_state = array('uid' => $account->uid);
-    user_login_submit(array(), $form_state);
-  }
-  // Save launch information in session
+  // Save launch information in session.
   $_SESSION['lti_tool_provider_context_info'] = $launch_info;
-  // Go to the required destination
+  // Go to the required destination.
   if (key_exists('custom_destination', $launch_info)) {
     $destination .= '/' . $launch_info['custom_destination'];
   }
@@ -195,7 +202,6 @@ function lti_tool_provider_launch() {
   lti_tool_provider_goto($destination);
   return 'Launched';
 }
-
 
 /**
  * Menu title callback for the lti return menu item
@@ -218,13 +224,14 @@ function lti_tool_provider_return_title($title) {
 function lti_tool_provider_return() {
   // Logout the user and redirect to the return url in the ltitp_context_info.
   global $user;
-  // If in a lti context log user out and return to launch presentation, otherwise just logout.
+  // If in a lti context log user out and return to launch presentation.
+  // otherwise just logout.
   if (isset($_SESSION['lti_tool_provider_context_info'])) {
     module_invoke_all('lti_tool_provider_return');
     $url = $_SESSION['lti_tool_provider_context_info']['launch_presentation_return_url'];
     watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
     module_invoke_all('user_logout', $user);
-    // Destroy the current session, and reset $user to the anonymous user
+    // Destroy the current session, and reset $user to the anonymous user.
     session_destroy();
     lti_tool_provider_goto($url);
   }
@@ -258,7 +265,8 @@ function lti_tool_provider_home_title($title) {
  * Menu page callback for the LTI Home menu item.
  */
 function lti_tool_provider_home() {
-  // If in a lti context return to group home page + custom destination, otherwise just the site home.
+  // If in a lti context return to group home page + custom destination.
+  // Otherwise just the site home.
   $destination = '';
   if (isset($_SESSION['lti_tool_provider_context_info'])) {
     if (key_exists('course_entity_type', $_SESSION['lti_tool_provider_context_info'])) {
@@ -309,7 +317,8 @@ function lti_tool_provider_info() {
 }
 
 /**
- * Menu page callback to configure settings for mapping user attributes from the LTI context variables.
+ * Menu page callback to configure settings for mapping user attributes
+ *   from the LTI context variables.
  *
  * @param array $form
  *
@@ -506,7 +515,7 @@ function lti_tool_provider_group_mapping($form, &$form_state)  {
       'effect' => 'fade',
     ),
   );
-  // The group_detail section of the form is ajax reloaded when the bundle or the creat_course checkbox changes
+  // The group_detail section of the form is ajax reloaded when the bundle or the creat_course checkbox changes.
   $form['bundle']['#default_value'] = isset($form_state['values']['bundle']) ? $form_state['values']['bundle'] : $old_bundle;
   $is_node_type = (reset(explode(':', $form['bundle']['#default_value'])) == 'node') ? TRUE : FALSE;
   $form['group_detail'] = array(
@@ -544,7 +553,7 @@ function lti_tool_provider_group_mapping($form, &$form_state)  {
     $form['group_detail']['mapping'] = array(
       '#tree' => TRUE,
       '#theme' => 'table',
-      '#header' => array(t('LTI Context Variable'), t('Group Attribute') ),
+      '#header' => array(t('LTI Context Variable'), t('Group Attribute')),
       '#rows' => array(),
       '#weight' => -1,
     );
@@ -589,7 +598,7 @@ function lti_tool_provider_group_mapping($form, &$form_state)  {
       );
       list($entity, $bundle) = explode(':', $form['bundle']['#default_value']);
       $select_roles = og_roles($entity, $bundle);
-      // Remove OG_ANONYMOUS_ROLE in $select_roles
+      // Remove OG_ANONYMOUS_ROLE in $select_roles.
       if (($key = array_search(OG_ANONYMOUS_ROLE, $select_roles)) !== FALSE) {
         unset($select_roles[$key]);
       }
@@ -755,7 +764,7 @@ function lti_tool_provider_consumers_admin() {
         'data' => array(
           'id' => $entity->lti_tool_provider_consumer_id,
           //'Consumer' => $entity->lti_tool_provider_consumer_consumer,
-          //This statement can create url to view individual keys
+          //This statement can create url to view individual keys.
           'Consumer' => l($entity->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $entity->lti_tool_provider_consumer_id),
           'Key' => $entity->lti_tool_provider_consumer_key,
           'Secret' => $entity->lti_tool_provider_consumer_secret,
@@ -876,7 +885,7 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
   $check_domain = FALSE;
   $new_consumer = $form_state['values']['lti_tool_provider_consumer_id'];
   if ($new_consumer == 0) {
-    // Create
+    // Create.
     $query =new EntityFieldQuery();
     $query
     -> entityCondition('entity_type', 'lti_tool_provider_consumer')
@@ -900,7 +909,7 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
     }
   }
   else {
-    // Edit or delete
+    // Edit or delete.
     $query = new EntityFieldQuery();
     $query
     ->entityCondition('entity_type', 'lti_tool_provider_consumer')

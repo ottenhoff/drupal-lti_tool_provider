@@ -3,6 +3,7 @@
  * @file
  * Contains LTIToolProviderOAuthDataStore.
  */
+
 $library = libraries_load('oauth');
 if ($library['loaded'] == FALSE) {
   drupal_set_message(t('Missing OAuth library: @error', array('@error' => $library['error'])), 'error');

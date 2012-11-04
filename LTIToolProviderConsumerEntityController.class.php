@@ -30,7 +30,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
   }
 
   public function save($entity) {
-    $transaction=db_transaction();
+    $transaction = db_transaction();
     try {
       $entity->is_new = empty($enity->lti_tool_provider_consumer_id);
       if (empty($entity->date_joined)) {
