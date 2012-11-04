@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * lti_tool_provider hook implementations and support functions.
@@ -798,3 +797,4 @@ function lti_tool_provider_create_account($user, $info) {
   }
   drupal_set_message(t('User account created.'), 'info');
 }
+
