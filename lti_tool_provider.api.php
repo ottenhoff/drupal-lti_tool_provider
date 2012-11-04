@@ -25,7 +25,7 @@ function hook_lti_tool_provider_return() {
   /*
    * Do stuff at the time of an LTI return.
    * Invoked before user logged out and session is destroyed.
-   * LTI context variables are available in 
+   * LTI context variables are available in
    * $_SESSION['lti_tool_provider_context_info'].
    */
 }

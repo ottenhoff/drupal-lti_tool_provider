@@ -6,13 +6,15 @@
  */
 
 /**
+ * LTI launch.
+ * 
  * Implements the [base_url]/lti path which is called to launch the
  * tool from the LMS
  *  - Verifies the request using OAuth and adds the lti context_info
  *    to the session
  *  - Authenticates the user, possibly after provisioning the account
  *  - Authorises the user via global role mapping
- *  - If OG is configured a course may be provisioned from the 
+ *  - If OG is configured a course may be provisioned from the
  *    context_info and group roles are mapped
  *  - Finally the destination is calculated and user is redirected there.
  */
@@ -67,7 +69,7 @@ function lti_tool_provider_launch() {
   if ($user->uid == 0) {
     // Unauthenticated so create user if necessary.
     if ($account = user_load_by_name($lti_user)) {
-      // User exists
+      // User exists.
       if ($account->uid == 1) {
         // User 1 must use drupal authentication.
         drupal_set_message(t('Admin account must use Drupal authentication.'), 'error');
@@ -141,9 +143,11 @@ function lti_tool_provider_launch() {
           $course_found = TRUE;
           $launch_info['course_entity_type'] = $group_entity;
           $launch_info['course_entity_eid'] = $group_id;
-          // Found the group that matches the context_id. Add the user to the group.
+          // Found the group that matches the context_id.
+          // Add the user to the group.
           if (!array_key_exists($group_entity, $users_groups) || !in_array($group_id, $users_groups[$group_entity])) {
-            og_group($group_entity, $group_id, array('entity_type' => 'user',
+            og_group($group_entity, $group_id, array(
+              'entity_type' => 'user',
               'entity' => $account->uid,
               'field_name' => FALSE,
               'state' => OG_STATE_ACTIVE,
@@ -164,7 +168,7 @@ function lti_tool_provider_launch() {
         $node->type = $group_bundle;
         $node->language = LANGUAGE_NONE;
         node_object_prepare($node);
-        $saved_settings = variable_get('lti_tool_provider_group_mapping' , array());
+        $saved_settings = variable_get('lti_tool_provider_group_mapping', array());
         foreach ($saved_settings as $variable => $field) {
           if ($field != 'none') {
             if ($field != 'title') {
@@ -204,7 +208,7 @@ function lti_tool_provider_launch() {
 }
 
 /**
- * Menu title callback for the lti return menu item
+ * Menu title callback for the lti return menu item.
  */
 function lti_tool_provider_return_title($title) {
   if (isset($_SESSION['lti_tool_provider_context_info'])) {
@@ -216,7 +220,7 @@ function lti_tool_provider_return_title($title) {
 }
 
 /**
- * Page callback for the lti return menu item
+ * Page callback for the lti return menu item.
  *
  * @return string
  *   The page content if any.
@@ -299,7 +303,7 @@ function lti_tool_provider_info() {
     foreach ($info as $key => $value) {
       $rows[$loop_counter]['data']['key'] = $key;
       $rows[$loop_counter]['data']['value'] = $value;
-      $loop_counter ++;
+      $loop_counter++;
     }
     $content['table'] = array(
       '#theme' => 'table',
@@ -317,11 +321,11 @@ function lti_tool_provider_info() {
 }
 
 /**
- * Menu page callback to configure settings for mapping user attributes
- *   from the LTI context variables.
+ * Menu page callback.
+ *
+ * Configure settings for mapping user attributes from the LTI context variables.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_user_attributes($form, &$form_state) {
@@ -373,7 +377,6 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
  * Validation for the user attributes form.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_user_attributes_validate($form, &$form_state) {
@@ -402,7 +405,6 @@ function lti_tool_provider_user_attributes_validate($form, &$form_state) {
  * Submit handler for the user attributes form.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_user_attributes_submit($form, &$form_state) {
@@ -419,7 +421,6 @@ function lti_tool_provider_user_attributes_submit($form, &$form_state) {
  * Admin form for the global roles.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_global_roles($form, &$form_state) {
@@ -474,7 +475,6 @@ function lti_tool_provider_global_roles($form, &$form_state) {
  * Submit handler for the global roles form.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_global_roles_submit($form, &$form_state) {
@@ -490,10 +490,9 @@ function lti_tool_provider_global_roles_submit($form, &$form_state) {
  * Admin form for the group mapping.
  *
  * @param array $form
- *
  * @param array $form_state
  */
-function lti_tool_provider_group_mapping($form, &$form_state)  {
+function lti_tool_provider_group_mapping($form, &$form_state) {
   $form = array();
   $form['description'] = array(
     '#type' => 'item',
@@ -515,7 +514,8 @@ function lti_tool_provider_group_mapping($form, &$form_state)  {
       'effect' => 'fade',
     ),
   );
-  // The group_detail section of the form is ajax reloaded when the bundle or the creat_course checkbox changes.
+  // The group_detail section of the form is ajax reloaded when the bundle
+  // or the creat_course checkbox changes.
   $form['bundle']['#default_value'] = isset($form_state['values']['bundle']) ? $form_state['values']['bundle'] : $old_bundle;
   $is_node_type = (reset(explode(':', $form['bundle']['#default_value'])) == 'node') ? TRUE : FALSE;
   $form['group_detail'] = array(
@@ -655,17 +655,24 @@ function lti_tool_provider_group_mapping($form, &$form_state)  {
  * AJAX callback for the group mapping form.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_group_mapping_select_callback($form, &$form_state) {
   return $form['group_detail'];
 }
 
+/**
+ * Validation callback.
+ * 
+ * @param unknown $form
+ * @param unknown $form_state
+ */
 function lti_tool_provider_group_mapping_validate($form, &$form_state) {
   $entity_bundle = $form_state['values']['bundle'];
   list($entity, $bundle) = explode(':', $entity_bundle);
-  if ($entity == 'none') return;
+  if ($entity == 'none') {
+    return;
+  }
   $check_isset_title = FALSE;
   $check_isset_context_id = FALSE;
   $check_repeat = FALSE;
@@ -680,7 +687,7 @@ function lti_tool_provider_group_mapping_validate($form, &$form_state) {
         $check_isset_context_id = TRUE;
       }
       $value = $form_state['input']['mapping'][$key]['attribute'];
-      isset($counters[$value]) ? $counters[$value]++ : 0;
+      isset($counters[$value]) ? $counters[$value]++  : 0;
     }
   }
   foreach ($counters as $counter => $count) {
@@ -705,7 +712,6 @@ function lti_tool_provider_group_mapping_validate($form, &$form_state) {
  * Update or create a consumer entity.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_group_mapping_submit($form, &$form_state) {
@@ -758,13 +764,12 @@ function lti_tool_provider_consumers_admin() {
       '#header' => array(t('ID'), t('Consumer'), t('Key'), t('Secret'), t('Domain'), t('Dummy Account'), t('Date Joined')),
     );
     $loop_counter = 0;
-    foreach ( $entities as $entity ) {
+    foreach ($entities as $entity) {
       // Create tabular rows for our entities.
       $content['entity_table']['#rows'][$loop_counter] = array(
         'data' => array(
           'id' => $entity->lti_tool_provider_consumer_id,
-          //'Consumer' => $entity->lti_tool_provider_consumer_consumer,
-          //This statement can create url to view individual keys.
+          // This statement can create url to view individual keys.
           'Consumer' => l($entity->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $entity->lti_tool_provider_consumer_id),
           'Key' => $entity->lti_tool_provider_consumer_key,
           'Secret' => $entity->lti_tool_provider_consumer_secret,
@@ -786,7 +791,7 @@ function lti_tool_provider_consumers_admin() {
           $content['entity_table']['#rows'][$loop_counter]['data'][lti_tool_provider_get_column_desc($entity_type, $col)] = $value;
         }
       }
-      $loop_counter ++;
+      $loop_counter++;
     }
     if (isset($extra_cols)) {
       foreach ($extra_cols as $col) {
@@ -808,12 +813,9 @@ function lti_tool_provider_consumers_admin() {
  * Generate the consumer entity form.
  *
  * @param array $form
- *
  * @param array $form_state
- *
  * @param object $entity
  *   The consumer entity to display.
- *
  * @return array
  *   The form array.
  */
@@ -877,7 +879,6 @@ function lti_tool_provider_consumer_form($form, &$form_state, $entity) {
  * Validate the consumer entity form.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_consumer_form_validate($form, &$form_state) {
@@ -886,10 +887,10 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
   $new_consumer = $form_state['values']['lti_tool_provider_consumer_id'];
   if ($new_consumer == 0) {
     // Create.
-    $query =new EntityFieldQuery();
+    $query = new EntityFieldQuery();
     $query
-    -> entityCondition('entity_type', 'lti_tool_provider_consumer')
-    -> propertyCondition('lti_tool_provider_consumer_key', $form_state['values']['lti_tool_provider_consumer_key']);
+    ->entityCondition('entity_type', 'lti_tool_provider_consumer')
+    ->propertyCondition('lti_tool_provider_consumer_key', $form_state['values']['lti_tool_provider_consumer_key']);
     $result = $query->execute();
     if (empty($result)) {
       $check_key = TRUE;
@@ -942,7 +943,7 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
   elseif (!$check_domain) {
     form_set_error('', t('Domains must be unique.'));
   }
-  $pattern ='/([A-Z0-9 _!@#$%=+*.?<>\/\r\n])/';
+  $pattern = '/([A-Z0-9 _!@#$%=+*.?<>\/\r\n])/';
   $domain_char_check = preg_match($pattern, $form_state['values']['lti_tool_provider_consumer_domain']);
   if ($domain_char_check) {
     form_set_error('', t('The domain must not contain numeric value, special characters, spaces and upper cases'));
@@ -953,7 +954,6 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
  * Update or create a consumer entity.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_consumer_form_submit($form, &$form_state) {
@@ -983,16 +983,16 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
  * Edit or delete a consumer entity.
  *
  * @param array $form
- *
  * @param array $form_state
  */
 function lti_tool_provider_consumer_edit_delete($form , &$form_state) {
   $entity = $form_state['values']['lti_tool_provider_consumer'];
-  lti_tool_provider_remove_dummy_account($entity ->lti_tool_provider_consumer_domain);
+  lti_tool_provider_remove_dummy_account($entity->lti_tool_provider_consumer_domain);
   lti_tool_provider_consumer_delete($entity);
-  drupal_set_message(t('The entity %lti_tool_provider_consumer_consumer (ID %lti_tool_provider_consumer_id) has been deleted.',
-    array('%lti_tool_provider_consumer_consumer' => $entity->lti_tool_provider_consumer_consumer, '%lti_tool_provider_consumer_id' => $entity->lti_tool_provider_consumer_id))
-  );
+  drupal_set_message(t('The entity %lti_tool_provider_consumer_consumer (ID %lti_tool_provider_consumer_id) has been deleted.', array(
+    '%lti_tool_provider_consumer_consumer' => $entity->lti_tool_provider_consumer_consumer,
+    '%lti_tool_provider_consumer_id' => $entity->lti_tool_provider_consumer_id,
+  )));
   $form_state['redirect'] = 'admin/config/lti-tool-provider/lti-tool-consumers';
 }
 
@@ -1001,9 +1001,7 @@ function lti_tool_provider_consumer_edit_delete($form , &$form_state) {
  *
  * @param object $entity
  *   The consumer to view.
- *
  * @param string $view_mode
- *
  * @return array
  *   The content array from the entity.
  */
@@ -1062,7 +1060,7 @@ function lti_tool_provider_consumer_view($entity, $view_mode = 'tweaky') {
     '#title' => t('Date Joined'),
     '#markup' => format_date($entity->date_joined),
   );
-  global $language ;
+  global $language;
   $langcode = $language->language;
   $entity->content['#language'] = $langcode;
   module_invoke_all('entity_view', $entity, $entity_type, $view_mode, $langcode);

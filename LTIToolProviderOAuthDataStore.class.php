@@ -12,6 +12,12 @@ else {
   require_once($library['library path'] . '/OAuth.php');
 
   class LTIToolProviderOAuthDataStore extends OAuthDataStore {
+    
+    /**
+     * 
+     * @param string $consumer_key
+     * @return OAuthConsumer
+     */
     function lookup_consumer($consumer_key) {
       $query = new EntityFieldQuery();
       $result = $query->entityCondition('entity_type', 'lti_tool_provider_consumer')
@@ -30,24 +36,51 @@ else {
       return $consumer;
     }
 
+    /**
+     * 
+     * @param OAuthConsumer $consumer
+     * @param string $token_type
+     * @param OAuthToken $token
+     * @return OAuthToken
+     */
     function lookup_token($consumer, $token_type, $token) {
       return new OAuthToken($consumer, '');
     }
 
+    /**
+     * 
+     * @param OAuthConsumer $consumer
+     * @param OAuthToken $token
+     * @param string $nonce
+     * @param integer $timestamp
+     * @return NULL
+     */
     function lookup_nonce($consumer, $token, $nonce, $timestamp) {
       return NULL;
     }
-
+    /**
+     * 
+     * @param OAuthConsumer $consumer
+     * @param string $callback
+     * @return NULL
+     */
     function new_request_token($consumer, $callback = NULL) {
-      // return a new token attached to this consumer
+      // Return a new token attached to this consumer.
       return NULL;
     }
 
+    /**
+     * 
+     * @param OAuthToken $token
+     * @param OAuthConsumer $consumer
+     * @param string $verifier
+     * @return NULL
+     */
     function new_access_token($token, $consumer, $verifier = NULL) {
-      // return a new access token attached to this consumer
+      // Return a new access token attached to this consumer
       // for the user associated with this token if the request token
-      // is authorized
-      // should also invalidate the request token
+      // is authorized.
+      // Should also invalidate the request token.
       return NULL;
     }
   }

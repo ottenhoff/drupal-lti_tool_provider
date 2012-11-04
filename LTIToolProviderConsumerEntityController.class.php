@@ -14,6 +14,11 @@ extends DrupalEntityControllerInterface {
 class LTIToolProviderConsumerEntityController
 extends DrupalDefaultEntityController
 implements LTIToolProviderConsumerEntityControllerInterface {
+  
+  /**
+   * 
+   * @return object
+   */
   public function create() {
     $entity = new stdClass();
     $entity->lti_tool_provider_consumer_id = 0;
@@ -29,6 +34,11 @@ implements LTIToolProviderConsumerEntityControllerInterface {
     return $entity;
   }
 
+  /**
+   * 
+   * @param object $entity
+   * @return unknown|boolean
+   */
   public function save($entity) {
     $transaction = db_transaction();
     try {
@@ -62,10 +72,19 @@ implements LTIToolProviderConsumerEntityControllerInterface {
     }
   }
 
+  /**
+   * 
+   * @param object $entity
+   */
   public function delete($entity) {
     $this->delete_multiple(array($entity));
   }
 
+  /**
+   * 
+   * @param array $entities
+   * @throws Exception
+   */
   public function delete_multiple($entities) {
     $ids = array();
     if (!empty($entities)) {

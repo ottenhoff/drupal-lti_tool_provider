@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * lti_tool_provider hook implementations and support functions.
+ */
+
 /**
  * Implements hook_library_info().
  */
@@ -180,7 +186,7 @@ function lti_tool_provider_assign_global_roles_to_user($lti_roles, $uid) {
   $roles = explode(',', $lti_roles);
   foreach ($roles as $key => $raw_role) {
     $lti_role = end(explode('/', end(explode(':', $raw_role))));
-    // Check if the mapped global role exists
+    // Check if the mapped global role exists.
     if (isset($select_roles[$global_role_array[$lti_role]])) {
       user_multiple_role_edit(array($uid), 'add_role', $global_role_array[$lti_role]);
     }
@@ -192,11 +198,10 @@ function lti_tool_provider_assign_global_roles_to_user($lti_roles, $uid) {
  *
  * @param string $lti_roles_str
  *   A string containing the lti roles from the lti launch parameters.
- *
  * @return array
  *   The found roles.
  */
-function lti_tool_provider_search_roles($lti_roles_str)  {
+function lti_tool_provider_search_roles($lti_roles_str) {
   $found_roles = array();
   $group_role_array = variable_get('lti_tool_provider_group_role_array');
   $lti_roles = explode(',', $lti_roles_str);
@@ -239,6 +244,7 @@ function lti_tool_provider_is_basic_lti_request() {
  * Create an options array for a select list of group bundles.
  *
  * @return array
+ *   An options array of group bundles.
  */
 function lti_tool_provider_get_group_bundles() {
   // Add none:None and set the entity types as the first key
@@ -261,7 +267,7 @@ function lti_tool_provider_get_group_bundles() {
  *   An array containing the roles.
  */
 function lti_tool_provider_get_lti_roles() {
-  return  array(
+  return array(
     'Learner',
     'Instructor',
     'ContentDeveloper',
@@ -303,15 +309,16 @@ function lti_tool_provider_context_mapping_details() {
 }
 
 /**
- * Retrieve the field labels and types from the entity as an array
- * suitable for a select list.
+ * Retrieve the field labels and types from the entity.
+ * 
+ * Return as an array suitable for a select list.
  *
  * @param string $group_bundle
  *   The string of the form "entity:bundle"
  *
  * @return array
- *   An array containing all the retrieved fields prepended with an entry for none,
- *   and if the entity type is node, an entry for Title.
+ *   An array containing all the retrieved fields prepended with an entry
+ *   for none, and if the entity type is node, an entry for Title.
  */
 function lti_tool_provider_retrieve_entity_field_types($group_bundle) {
   list($entity, $bundle) = explode(':', $group_bundle);
@@ -327,13 +334,13 @@ function lti_tool_provider_retrieve_entity_field_types($group_bundle) {
 }
 
 /**
- * Retrieve the field labels and types from the user entity as an array
- * suitable for a select list.
+ * Retrieve the field labels and types from the user entity.
+ * 
+ * Return as an array suitable for a select list.
  *
  * @param string $filter
  *   The string which represent the type of field to retrieve.
- *
- * @return
+ * @return array
  *   An array containing all the retrieved fields.
  */
 function lti_tool_provider_retrieve_user_field_types($filter = 'TEXT') {
@@ -363,7 +370,7 @@ function lti_tool_provider_consumer_add() {
 /**
  * Save a consumer.
  *
- * @param $entity
+ * @param object $entity
  *   The consumer to be saved.
  */
 function lti_tool_provider_consumer_save(&$entity) {
@@ -373,7 +380,7 @@ function lti_tool_provider_consumer_save(&$entity) {
 /**
  * Delete a consumer.
  *
- * @param $entity
+ * @param object $entity
  *   The consumer to be deleted.
  */
 function lti_tool_provider_consumer_delete($entity) {
@@ -383,12 +390,10 @@ function lti_tool_provider_consumer_delete($entity) {
 /**
  * Load a consumer.
  *
- * @param $id
+ * @param integer $id
  *   The id of the consumer entity to be loaded.
- *
  * @param boolean $reset
  *   Wether to reset the cache.
- *
  * @return object
  *   The consumer entity.
  */
@@ -406,6 +411,7 @@ function lti_tool_provider_consumer_load($id = NULL, $reset = FALSE) {
  * @param array $conditions
  * @param boolean $reset
  *   Wether to reset the cache.
+ * @return object
  */
 function lti_tool_provider_consumer_load_multiple($ids = FALSE, $conditions = array(), $reset = FALSE) {
   return entity_load('lti_tool_provider_consumer', $ids, $conditions, $reset);
@@ -427,7 +433,7 @@ function lti_tool_provider_validate_consumer($consumer, $key, $secret) {
   $content = array();
   $entities = lti_tool_provider_consumer_load_multiple();
   if (!empty($entities)) {
-    foreach ( $entities as $entity ) {
+    foreach ($entities as $entity) {
       if ($key == $entity->lti_tool_provider_consumer_key && $secret == $entity->lti_tool_provider_consumer_secret && $consumer == $entity->lti_tool_provider_consumer_consumer) {
         return TRUE;
       }
@@ -446,7 +452,7 @@ function lti_tool_provider_retrieve_consumer_secrets() {
   $entites = lti_tool_provider_consumer_load_multiple();
   $list = array();
   foreach ($entites as $entity) {
-    $list[] = $entity->lti_tool_provider_consumer_secret ;
+    $list[] = $entity->lti_tool_provider_consumer_secret;
   }
   return $list;
 }
@@ -508,9 +514,9 @@ function lti_tool_provider_create_all_dummy_accounts() {
   $results_arr = array();
   if (!empty($entities)) {
     foreach ($entities as $entity) {
-      $dummyname = 'lti_user@' . $entity-> lti_tool_provider_consumer_domain;
+      $dummyname = 'lti_user@' . $entity->lti_tool_provider_consumer_domain;
       $email = $dummyname . 'example.com';
-      // Check if the dummy account exist
+      // Check if the dummy account exist.
       $query = new EntityFieldQuery();
       $query
       ->entityCondition('entity_type', 'user')
@@ -526,7 +532,7 @@ function lti_tool_provider_create_all_dummy_accounts() {
         }
       }
       if ($uid == NULL) {
-        // Create user with the authenticated roles
+        // Create user with the authenticated roles.
         $userinfo = array(
           'name' => $dummyname,
           'pass' => user_password(20),
@@ -581,7 +587,6 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
  * Create a dummy account for a domain.
  *
  * @param string $domain
- *
  * @return integer
  *   The account uid.
  */
@@ -592,7 +597,7 @@ function lti_tool_provider_create_dummy_account($domain) {
   }
   else {
     $email = ($domain == '') ? $dummy_name . '@example.com' : $dummy_name . '@' . $domain . '.example.com';
-    // Create user with the authenticated roles
+    // Create user with the authenticated roles.
     $userinfo = array(
       'name' => $dummy_name,
       'pass' => user_password(20),
@@ -602,7 +607,7 @@ function lti_tool_provider_create_dummy_account($domain) {
       'access' => REQUEST_TIME,
     );
     $account = user_save(drupal_anonymous_user(), $userinfo);
-    // Add default (drupal authenticated role)
+    // Add default (drupal authenticated role).
     user_multiple_role_edit(array($account->uid), 'add_role', 2);
     return $account->uid;
   }
@@ -612,7 +617,6 @@ function lti_tool_provider_create_dummy_account($domain) {
  * Translate boolean to On/Off.
  *
  * @param integer $bool
- *
  * @return string
  */
 function lti_tool_provider_trans_bool($bool) {
@@ -644,8 +648,7 @@ function lti_tool_provider_get_extra_columns() {
 /**
  * Get the column descriptions.
  *
- * @param unknown_type $col
- *
+ * @param string $col
  * @return string
  *   The description.
  */
@@ -692,7 +695,7 @@ function lti_tool_provider_entity_info() {
 /**
  * Get the url to view a consumer.
  *
- * @param unknown_type $consumer
+ * @param object $consumer
  * @return multitype:string
  */
 function lti_tool_provider_consumer_uri($consumer) {
@@ -709,11 +712,12 @@ function lti_tool_provider_consumer_uri($consumer) {
  */
 function lti_tool_provider_goto($path) {
   if (php_sapi_name() == 'cli') {
-    // This may mean cron via Drush
+    // This may mean cron via Drush.
     return;
   }
   if (preg_match('/\/cron.php$/', $_SERVER['SCRIPT_NAME'])) {
-    //check for cron.php in the url. *preg_match accommodates sites in sub-directories
+    // Check for cron.php in the url. 
+    // preg_match accommodates sites in sub-directories.
     return;
   }
   if (arg(0) == 'admin' && arg(1) == 'reports' && arg(2) == 'status' && arg(3) == 'run-cron') {
@@ -727,15 +731,13 @@ function lti_tool_provider_goto($path) {
  *
  * @param string $user
  *   The requested account name.
- *
  * @param array $info
  *   The lti context info.
- *
  * @return object
  *   The user account object.
  */
 function lti_tool_provider_create_account($user, $info) {
-  // Provision a user account for $lti_user
+  // Provision a user account for $lti_user.
   if (!isset($info['lis_person_contact_email_primary'])) {
     if ($domain == '') {
       $email = $lti_user . '@example.com';
@@ -767,5 +769,4 @@ function lti_tool_provider_create_account($user, $info) {
     return;
   }
   drupal_set_message(t('User account created.'), 'info');
-
 }

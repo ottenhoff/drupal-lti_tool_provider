@@ -11,8 +11,8 @@ Download the module dependencies,
   http://drupal.org/project/libraries
 Download the OAuth.php library file https://github.com/juampy72/OAuth-PHP 
 and place it in sites/all/libraries/oauth/
-Enable the LTI Tool Provider module and optionally the LTI Tool Provider Outcomes
-and LTI Tool Provider Memberships submodules.
+Enable the LTI Tool Provider module and optionally the LTI Tool Provider
+Outcomes and LTI Tool Provider Memberships submodules.
 
 Administrative settings admin/lti_tool_provider
 
@@ -43,13 +43,13 @@ admin of your Drupal site.
 
 Course to Group Mapping
 If you have the Drupal Organic Groups installed (7.x-2.x only, 7.x-1.x not
-supported), LTI Tool Provider will allow you to map LMS courses identified by the
-LMS context_label, to a group type i.e. bundle. The context_label can be mapped
-to the group title or any other text field available on the group bundle.
+supported), LTI Tool Provider will allow you to map LMS courses identified by
+the LMS context_label, to a group type i.e. bundle. The context_label can be
+mapped to the group title or any other text field available on the group bundle.
 Optionally groups may be auto-provisioned when a user with the required mapped
-role, performs an LTI launch. This user becomes the Group owner. If a field other
-than title is chosen for context_label, the context_title is mapped to the group
-title when provisioning.
+role, performs an LTI launch. This user becomes the Group owner. If a field
+other than title is chosen for context_label, the context_title is mapped to
+the group title when provisioning.
 
 Group Roles
 If Course/Group mapping is configured, you may map any of the LMS roles to Group
@@ -77,7 +77,8 @@ A home menu item is provided as a user menu item titled with
 custom_destination_label or resource_link_title or Home.
 
 Custom Launch Parameters
-Some LMS LTI implementations allow the configuration of custom launch parameters.
+Some LMS LTI implementations allow the configuration of custom launch
+parameters.
 The following custom parameters are processed by LTI Tool Provider.
 
 custom_destination defines a landing page path, if provided it will override the
