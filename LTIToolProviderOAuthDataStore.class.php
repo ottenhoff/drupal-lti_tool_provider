@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains LTIToolProviderOAuthDataStore.
@@ -17,8 +18,10 @@ else {
      * Find a consumer matching a key.
      *
      * @param string $consumer_key
+     *   A consumer key to lookup.
      *
      * @return OAuthConsumer
+     *   The corresponding consumer entity.
      */
     function lookup_consumer($consumer_key) {
       $query = new EntityFieldQuery();
@@ -42,36 +45,48 @@ else {
      * Lookup a token.
      *
      * @param OAuthConsumer $consumer
+     *   The consumer entity.
      * @param string $token_type
+     *   The type of token.
      * @param OAuthToken $token
+     *   The token.
      *
      * @return OAuthToken
+     *   The token.
      */
     function lookup_token($consumer, $token_type, $token) {
       return new OAuthToken($consumer, '');
     }
 
     /**
-     * Lookup a nonce.
+     * Lookup a nonce (not implemented).
      *
      * @param OAuthConsumer $consumer
+     *   The consumer entity.
      * @param OAuthToken $token
+     *   A token.
      * @param string $nonce
+     *   A nonce.
      * @param integer $timestamp
+     *   A timestamp.
      *
      * @return NULL
+     *   Always null.
      */
     function lookup_nonce($consumer, $token, $nonce, $timestamp) {
       return NULL;
     }
 
     /**
-     * Get a new request token.
+     * Get a new request token (not implemented).
      *
      * @param OAuthConsumer $consumer
+     *   The consumer entity.
      * @param string $callback
+     *   A callback.
      *
      * @return NULL
+     *   Always null.
      */
     function new_request_token($consumer, $callback = NULL) {
       // Return a new token attached to this consumer.
@@ -79,13 +94,17 @@ else {
     }
 
     /**
-     * Get a new access token.
+     * Get a new access token (not implemented).
      *
      * @param OAuthToken $token
+     *   A token.
      * @param OAuthConsumer $consumer
+     *   A consumer entity.
      * @param string $verifier
+     *   The verifier.
      *
      * @return NULL
+     *   Always null.
      */
     function new_access_token($token, $consumer, $verifier = NULL) {
       // Return a new access token attached to this consumer

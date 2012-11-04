@@ -17,8 +17,9 @@
  *  - If OG is configured a course may be provisioned from the
  *    context_info and group roles are mapped
  *  - Finally the destination is calculated and user is redirected there.
- *  
+ *
  *  @return string
+ *    Page content.
  */
 function lti_tool_provider_launch() {
   global $user;
@@ -329,9 +330,11 @@ function lti_tool_provider_info() {
  * LTI context variables.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
- *
+ *   The form state.
  * @return array
+ *   The form.
  */
 function lti_tool_provider_user_attributes($form, &$form_state) {
   $form['description'] = array(
@@ -382,7 +385,9 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
  * Validation for the user attributes form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_user_attributes_validate($form, &$form_state) {
   $check = TRUE;
@@ -410,7 +415,9 @@ function lti_tool_provider_user_attributes_validate($form, &$form_state) {
  * Submit handler for the user attributes form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_user_attributes_submit($form, &$form_state) {
   $lis_list = lti_tool_provider_user_mapping_lis_details();
@@ -426,7 +433,9 @@ function lti_tool_provider_user_attributes_submit($form, &$form_state) {
  * Admin form for the global roles.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_global_roles($form, &$form_state) {
   $form['description'] = array(
@@ -480,7 +489,9 @@ function lti_tool_provider_global_roles($form, &$form_state) {
  * Submit handler for the global roles form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_global_roles_submit($form, &$form_state) {
   $settings = array();
@@ -495,7 +506,9 @@ function lti_tool_provider_global_roles_submit($form, &$form_state) {
  * Admin form for the group mapping.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_group_mapping($form, &$form_state) {
   $form = array();
@@ -660,7 +673,9 @@ function lti_tool_provider_group_mapping($form, &$form_state) {
  * AJAX callback for the group mapping form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_group_mapping_select_callback($form, &$form_state) {
   return $form['group_detail'];
@@ -670,7 +685,9 @@ function lti_tool_provider_group_mapping_select_callback($form, &$form_state) {
  * Validation callback.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_group_mapping_validate($form, &$form_state) {
   $entity_bundle = $form_state['values']['bundle'];
@@ -717,7 +734,9 @@ function lti_tool_provider_group_mapping_validate($form, &$form_state) {
  * Update or create a consumer entity.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_group_mapping_submit($form, &$form_state) {
   variable_set('lti_tool_provider_group_mapping_bundle', $form_state['values']['bundle']);
@@ -767,13 +786,13 @@ function lti_tool_provider_consumers_admin() {
       '#theme' => 'table',
       '#rows' => array(),
       '#header' => array(
-        t('ID'), 
-        t('Consumer'), 
-        t('Key'), 
-        t('Secret'), 
-        t('Domain'), 
-        t('Dummy Account'), 
-        t('Date Joined')
+        t('ID'),
+        t('Consumer'),
+        t('Key'),
+        t('Secret'),
+        t('Domain'),
+        t('Dummy Account'),
+        t('Date Joined'),
       ),
     );
     $loop_counter = 0;
@@ -826,7 +845,9 @@ function lti_tool_provider_consumers_admin() {
  * Generate the consumer entity form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  * @param object $entity
  *   The consumer entity to display.
  *
@@ -893,7 +914,9 @@ function lti_tool_provider_consumer_form($form, &$form_state, $entity) {
  * Validate the consumer entity form.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_consumer_form_validate($form, &$form_state) {
   $check_key = FALSE;
@@ -968,7 +991,9 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
  * Update or create a consumer entity.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_consumer_form_submit($form, &$form_state) {
   $entity = $form_state['values']['lti_tool_provider_consumer'];
@@ -997,7 +1022,9 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
  * Edit or delete a consumer entity.
  *
  * @param array $form
+ *   The form.
  * @param array $form_state
+ *   The form state.
  */
 function lti_tool_provider_consumer_edit_delete($form, &$form_state) {
   $entity = $form_state['values']['lti_tool_provider_consumer'];
@@ -1016,6 +1043,7 @@ function lti_tool_provider_consumer_edit_delete($form, &$form_state) {
  * @param object $entity
  *   The consumer to view.
  * @param string $view_mode
+ *   The requested view mode.
  *
  * @return array
  *   The content array from the entity.

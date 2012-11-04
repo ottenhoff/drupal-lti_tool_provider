@@ -198,7 +198,7 @@ function lti_tool_provider_assign_global_roles_to_user($lti_roles, $uid) {
  *
  * @param string $lti_roles_str
  *   A string containing the lti roles from the lti launch parameters.
- *   
+ *
  * @return array
  *   The found roles.
  */
@@ -336,7 +336,7 @@ function lti_tool_provider_retrieve_entity_field_types($group_bundle) {
 
 /**
  * Retrieve the field labels and types from the user entity.
- * 
+ *
  * Return as an array suitable for a select list.
  *
  * @param string $filter
@@ -412,10 +412,12 @@ function lti_tool_provider_consumer_load($id = NULL, $reset = FALSE) {
  * @param array $ids
  *   An array of ids to load.
  * @param array $conditions
+ *   An array of search conditions.
  * @param boolean $reset
  *   Wether to reset the cache.
  *
  * @return object
+ *   An array of consumer entity objects.
  */
 function lti_tool_provider_consumer_load_multiple($ids = FALSE, $conditions = array(), $reset = FALSE) {
   return entity_load('lti_tool_provider_consumer', $ids, $conditions, $reset);
@@ -424,11 +426,11 @@ function lti_tool_provider_consumer_load_multiple($ids = FALSE, $conditions = ar
 /**
  * Validate the key and secret of the consumer.
  *
- * @param $consumer
+ * @param object $consumer
  *   The consumer string which represents the consumer.
- * @param $key
+ * @param string $key
  *   The key string.
- * @param $secret
+ * @param string $secret
  *   The secret string.
  *
  * @return boolean
@@ -466,8 +468,10 @@ function lti_tool_provider_retrieve_consumer_secrets() {
  * Retrieve the domain of a consumer given the consumer key.
  *
  * @param string $key
+ *   A consumer key.
  *
  * @return string
+ *   The domain.
  */
 function lti_tool_provider_retrieve_consumer_domain($key) {
   $query = new EntityFieldQuery();
@@ -488,11 +492,13 @@ function lti_tool_provider_retrieve_consumer_domain($key) {
 }
 
 /**
- * Retrieve the domain of a consumer given the consumer key.
+ * Retrieve the id of a consumer given the consumer key.
  *
  * @param string $key
+ *   A consumer key.
  *
  * @return string
+ *   The consumer id.
  */
 function lti_tool_provider_retrieve_consumer_id($key) {
   $query = new EntityFieldQuery();
@@ -561,8 +567,10 @@ function lti_tool_provider_create_all_dummy_accounts() {
  * Remove dummy account for a domain.
  *
  * @param string $domain
+ *   The domain.
  *
- * @return multitype:NULL
+ * @return array
+ *   An array of the removed uids.
  */
 function lti_tool_provider_remove_dummy_account($domain = '') {
   $dummy_name = ($domain == '') ? 'lti_user' : 'lti_user@' . $domain;
@@ -595,6 +603,7 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
  * Create a dummy account for a domain.
  *
  * @param string $domain
+ *   A consumer domain.
  *
  * @return integer
  *   The account uid.
@@ -626,8 +635,10 @@ function lti_tool_provider_create_dummy_account($domain) {
  * Translate boolean to On/Off.
  *
  * @param integer $bool
+ *   The integer.
  *
  * @return string
+ *   On or Off.
  */
 function lti_tool_provider_trans_bool($bool) {
   if ($bool == 1) {
@@ -642,6 +653,7 @@ function lti_tool_provider_trans_bool($bool) {
  * List columns added by other modules to the consumer.
  *
  * @return array
+ *   An array of column names.
  */
 function lti_tool_provider_get_extra_columns() {
   $extra_col = array();
@@ -659,6 +671,7 @@ function lti_tool_provider_get_extra_columns() {
  * Get the column descriptions.
  *
  * @param string $col
+ *  A column name.
  *
  * @return string
  *   The description.
@@ -707,8 +720,10 @@ function lti_tool_provider_entity_info() {
  * Get the url to view a consumer.
  *
  * @param object $consumer
+ *   A consumer object.
  *
- * @return multitype:string
+ * @return string
+ *   The url for the consumer view.
  */
 function lti_tool_provider_consumer_uri($consumer) {
   return array(

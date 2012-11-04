@@ -6,8 +6,24 @@
 
 interface LTIToolProviderConsumerEntityControllerInterface
 extends DrupalEntityControllerInterface {
+
+  /**
+   * Create.
+   */
   public function create();
+
+  /**
+   * Save.
+   *
+   * @param object $entity
+   */
   public function save($entity);
+
+  /**
+   * Delete.
+   *
+   * @param object $entity
+   */
   public function delete($entity);
 }
 
