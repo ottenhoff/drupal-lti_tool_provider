@@ -18,8 +18,8 @@
  *    context_info and group roles are mapped
  *  - Finally the destination is calculated and user is redirected there.
  *
- *  @return string
- *    Page content.
+ * @return string
+ *   Page content.
  */
 function lti_tool_provider_launch() {
   global $user;
@@ -333,6 +333,7 @@ function lti_tool_provider_info() {
  *   The form.
  * @param array $form_state
  *   The form state.
+ *
  * @return array
  *   The form.
  */
