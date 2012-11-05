@@ -83,22 +83,22 @@ function lti_tool_provider_launch() {
       // Provision a user account for $lti_user.
       if (!isset($launch_info['lis_person_contact_email_primary'])) {
         if ($domain == '') {
-          $email = $lti_user . '@example.com';
+          $mail = $lti_user . '@example.com';
         }
         else {
-          $email = $lti_user . '.example.com';
+          $mail = $lti_user . '.example.com';
         }
       }
       else {
-        $email = $launch_info['lis_person_contact_email_primary'];
+        $mail = $launch_info['lis_person_contact_email_primary'];
       }
       $user_attribute_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
       $fields = lti_tool_provider_retrieve_user_field_types('TEXT');
       $userinfo = array(
         'name' => $lti_user,
         'pass' => user_password(20),
-        'init' => $email,
-        'mail' => $email,
+        'init' => $mail,
+        'mail' => $mail,
         'status' => 1,
         'access' => REQUEST_TIME,
       );
@@ -218,7 +218,7 @@ function lti_tool_provider_return_title($title) {
     if (key_exists('custom_return_label', $_SESSION['lti_tool_provider_context_info'])) {
       return $_SESSION['lti_tool_provider_context_info']['custom_return_label'];
     }
-    return 'Return to LMS';
+    return 'Return to LMS.';
   }
 }
 
@@ -341,7 +341,7 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
   $form['description'] = array(
     '#type' => 'item',
     '#title' => t('LTI Context to User Attribute Mapping'),
-    '#description' => 'Choose the user attributes to be mapped from each LTI context variable',
+    '#description' => 'Choose the user attributes to be mapped from each LTI context variable.',
   );
   $fields_array = lti_tool_provider_retrieve_user_field_types('TEXT');
   $lis_list = lti_tool_provider_user_mapping_lis_details();

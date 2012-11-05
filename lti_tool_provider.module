@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * lti_tool_provider hook implementations and support functions.
@@ -55,7 +56,7 @@ function lti_tool_provider_menu() {
   $items = array();
   $items['admin/config/lti-tool-provider'] = array(
     'title' => 'LTI Tool Provider',
-    'description' => 'Config LTI Tool Provider',
+    'description' => 'Administer the LTI Tool Provider module.',
     'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('administer lti_tool_provider module'),
     'file' => 'system.admin.inc',
@@ -72,6 +73,7 @@ function lti_tool_provider_menu() {
   );
   $items['admin/config/lti-tool-provider/lti-tool-consumer/%lti_tool_provider_consumer'] = array(
     'title' => 'LTI Tool Consumer',
+    'description' => 'View/Edit/Delete an LTI Tool Consumer.',
     'page callback' => 'lti_tool_provider_consumer_view',
     'page arguments' => array(4),
     'access arguments' => array('administer lti_tool_provider module'),
@@ -79,11 +81,13 @@ function lti_tool_provider_menu() {
   );
   $items['admin/config/lti-tool-provider/lti-tool-consumer/%lti_tool_provider_consumer/view'] = array(
     'title' => 'View',
+    'description' => 'View an LTI Tool Consumer.',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
   $items['admin/config/lti-tool-provider/lti-tool-consumer/%lti_tool_provider_consumer/edit'] = array(
     'title' => 'Edit',
+    'description' => 'Edit an LTI Tool Consumer.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('lti_tool_provider_consumer_form', 4),
     'access arguments' => array('administer lti_tool_provider module'),
@@ -92,6 +96,7 @@ function lti_tool_provider_menu() {
   );
   $items['admin/config/lti-tool-provider/lti-tool-consumer/add'] = array(
     'title' => 'Add LTI Consumer',
+    'description' => 'Add an LTI Tool Consumer.',
     'page callback' => 'lti_tool_provider_consumer_add',
     'access arguments' => array('administer lti_tool_provider module'),
     'file' => 'lti_tool_provider.admin.inc',
@@ -527,7 +532,7 @@ function lti_tool_provider_create_all_dummy_accounts() {
   if (!empty($entities)) {
     foreach ($entities as $entity) {
       $dummyname = 'lti_user@' . $entity->lti_tool_provider_consumer_domain;
-      $email = $dummyname . 'example.com';
+      $mail = $dummyname . 'example.com';
       // Check if the dummy account exist.
       $query = new EntityFieldQuery();
       $query
@@ -548,8 +553,8 @@ function lti_tool_provider_create_all_dummy_accounts() {
         $userinfo = array(
           'name' => $dummyname,
           'pass' => user_password(20),
-          'init' => $email,
-          'mail' => $email,
+          'init' => $mail,
+          'mail' => $mail,
           'status' => 1,
           'access' => REQUEST_TIME,
         );
@@ -613,13 +618,13 @@ function lti_tool_provider_create_dummy_account($domain) {
     return $account->uid;
   }
   else {
-    $email = ($domain == '') ? $dummy_name . '@example.com' : $dummy_name . '@' . $domain . '.example.com';
+    $mail = ($domain == '') ? $dummy_name . '@example.com' : $dummy_name . '@' . $domain . '.example.com';
     // Create user with the authenticated roles.
     $userinfo = array(
       'name' => $dummy_name,
       'pass' => user_password(20),
-      'init' => $email,
-      'mail' => $email,
+      'init' => $mail,
+      'mail' => $mail,
       'status' => 1,
       'access' => REQUEST_TIME,
     );
@@ -670,7 +675,7 @@ function lti_tool_provider_get_extra_columns() {
  * Get the column descriptions.
  *
  * @param string $col
- *  A column name.
+ *   The field name for which to get a description.
  *
  * @return string
  *   The description.
@@ -767,22 +772,22 @@ function lti_tool_provider_create_account($user, $info) {
   // Provision a user account for $lti_user.
   if (!isset($info['lis_person_contact_email_primary'])) {
     if ($domain == '') {
-      $email = $lti_user . '@example.com';
+      $mail = $lti_user . '@example.com';
     }
     else {
-      $email = $lti_user . '.example.com';
+      $mail = $lti_user . '.example.com';
     }
   }
   else {
-    $email = $launch_info['lis_person_contact_email_primary'];
+    $mail = $launch_info['lis_person_contact_email_primary'];
   }
   $user_attribute_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
   $fields = lti_tool_provider_retrieve_user_field_types('TEXT');
   $userinfo = array(
     'name' => $lti_user,
     'pass' => user_password(20),
-    'init' => $email,
-    'mail' => $email,
+    'init' => $mail,
+    'mail' => $mail,
     'status' => 1,
     'access' => REQUEST_TIME,
   );
@@ -797,4 +802,3 @@ function lti_tool_provider_create_account($user, $info) {
   }
   drupal_set_message(t('User account created.'), 'info');
 }
-

@@ -56,7 +56,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    *
    * @param object $entity
    *
-   * @return unknown|boolean
+   * @return object|boolean
    */
   public function save($entity) {
     $transaction = db_transaction();
