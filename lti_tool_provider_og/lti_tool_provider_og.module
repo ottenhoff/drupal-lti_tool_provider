@@ -8,7 +8,7 @@
 /**
  * Implements hook_menu().
  */
-function lti_tool_provider_menu() {
+function lti_tool_provider_og_menu() {
   $items = array();
   $items['admin/config/lti-tool-provider/group-mapping'] = array(
     'title' => 'Group Mapping',
