@@ -16,7 +16,7 @@ function lti_tool_provider_og_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('lti_tool_provider_group_mapping'),
     'access arguments' => array('administer lti_tool_provider module'),
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider_og.admin.inc',
     'weight' => -4,
   );
   return $items;
