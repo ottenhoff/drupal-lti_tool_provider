@@ -49,7 +49,7 @@ function lti_tool_provider_og_group_mapping($form, &$form_state) {
       $form['group_detail']['create_course'] = array(
         '#type' => 'checkbox',
         '#title' => t('Automatically create groups. Note: Only available for node group bundles and LTI user must have appropriate "Create content type" permission.'),
-        '#default_value' => isset($form_state['values']['create_course']) ? $form_state['values']['create_course'] : variable_get('lti_tool_provider_provision_groups'),
+        '#default_value' => isset($form_state['values']['create_course']) ? $form_state['values']['create_course'] : variable_get('lti_tool_provider_og_provision_groups'),
         '#weight' => -5,
         '#ajax' => array(
           'callback' => 'lti_tool_provider_og_group_mapping_select_callback',
