@@ -171,7 +171,7 @@ function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, &$de
             }
           }
           else {
-            $node->$field = $launch_info[$variable];
+            $node->$field = isset($launch_info['custom_course_title']) ? $launch_info['custom_course_title'] : $launch_info[$variable];
           }
         }
       }

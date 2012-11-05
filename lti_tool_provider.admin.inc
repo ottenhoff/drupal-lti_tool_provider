@@ -115,7 +115,7 @@ function lti_tool_provider_return_title($title) {
     if (key_exists('custom_return_label', $_SESSION['lti_tool_provider_context_info'])) {
       return $_SESSION['lti_tool_provider_context_info']['custom_return_label'];
     }
-    return 'Return to LMS.';
+    return 'Return to LMS';
   }
 }
 

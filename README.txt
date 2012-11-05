@@ -9,10 +9,11 @@ directory.
 Download the module dependencies,
   http://drupal.org/project/entity and
   http://drupal.org/project/libraries
+  lti_tool_provider_og submodule also requires http://drupal.org/project/og
 Download the OAuth.php library file https://github.com/juampy72/OAuth-PHP 
 and place it in sites/all/libraries/oauth/
-Enable the LTI Tool Provider module and optionally the LTI Tool Provider
-Outcomes and LTI Tool Provider Memberships submodules.
+Enable the LTI Tool Provider module and optionally the LTI Tool Provider OG,
+LTI Tool Provider Outcomes and LTI Tool Provider Memberships submodules.
 
 Administrative settings admin/lti_tool_provider
 
@@ -43,13 +44,13 @@ admin of your Drupal site.
 
 Course to Group Mapping
 If you have the Drupal Organic Groups installed (7.x-2.x only, 7.x-1.x not
-supported), LTI Tool Provider will allow you to map LMS courses identified by
-the LMS context_label, to a group type i.e. bundle. The context_label can be
-mapped to the group title or any other text field available on the group bundle.
-Optionally groups may be auto-provisioned when a user with the required mapped
-role, performs an LTI launch. This user becomes the Group owner. If a field
-other than title is chosen for context_label, the context_title is mapped to
-the group title when provisioning.
+supported), LTI Tool Provider OG submodule will allow you to map LMS courses
+identified by the LMS context_label, to a group type i.e. bundle. The
+context_label can be mapped to the group title or any other text field
+available on the group bundle. Optionally groups may be auto-provisioned when
+a user with the required mapped role, performs an LTI launch. This user becomes
+the Group owner. The context_id, context_label, context_title and context_type
+are available to map to any text fields in the provisioned group entity.
 
 Group Roles
 If Course/Group mapping is configured, you may map any of the LMS roles to Group
@@ -60,12 +61,13 @@ The LMS must be configured to launch the Drupal site with the path "lti".
 e.g. https://www.example.com/lti
 NOTE: the LTI specification requires the use of TLS for security in the OAuth
 based LTI launch. You should use the Secure Pages module or other method to
-support https in your Drupal site.
+support https at least to the launch url.
 
 Drupal Landing Page
 Upon launch, LMS users will be directed to the Drupal site home page unless
 Course to Group mapping is enabled, in which case the user is directed to
 the group node page for the group which corresponds to the LTI context_id.
+The landing page can be overridden by a custom parameter, see below.
 
 LTI Return URL
 If it exists, the launch_presentation_return_url is provided as a user menu
@@ -82,9 +84,15 @@ parameters.
 The following custom parameters are processed by LTI Tool Provider.
 
 custom_destination defines a landing page path, if provided it will override the
-default (home page or group node) landing page. custom_title defines an
-alternate course/group title, if provided, it will be used as the group title
-when provisioning groups.
+default (home page or group node) landing page. 
+
+custom_destination_label defines a label to override the default Home menu label.
+
+custom_course_title defines an alternate course/group title, if provided, it
+will be used as the group title when provisioning groups.
+
+custom_return_label defines a label to override the default "Return to LMS" menu
+label.
 
 This software was developed as a project of the 
 Centre for Educational Innovation and Technology (The University of Queensland)
