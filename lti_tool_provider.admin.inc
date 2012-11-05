@@ -97,7 +97,7 @@ function lti_tool_provider_launch() {
   $destination = '';
   // Perform group related actions.
   if (module_exists('og')) {
-    lti_tool_provider_og($account, &$launch_info, &$destination);
+    lti_tool_provider_og($account, $launch_info, $destination);
   }
   // Save launch information in session.
   $_SESSION['lti_tool_provider_context_info'] = $launch_info;

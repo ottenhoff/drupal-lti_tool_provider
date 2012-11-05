@@ -768,10 +768,10 @@ function lti_tool_provider_goto($path) {
  * @return object
  *   The user account object.
  */
-function lti_tool_provider_create_account($lti_user, $info) {
+function lti_tool_provider_create_account($lti_user, $launch_info) {
   // Provision a user account for $lti_user.
-  if (!isset($info['lis_person_contact_email_primary'])) {
-    if ($info['consumer_domain'] == '') {
+  if (!isset($launch_info['lis_person_contact_email_primary'])) {
+    if ($launch_info['consumer_domain'] == '') {
       $mail = $lti_user . '@example.com';
     }
     else {
