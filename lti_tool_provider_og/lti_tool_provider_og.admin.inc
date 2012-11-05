@@ -212,7 +212,12 @@ function lti_tool_provider_og_group_mapping_validate($form, &$form_state) {
         $check_isset_context_id = TRUE;
       }
       $value = $form_state['input']['mapping'][$key]['attribute'];
-      $counters[$value]++;
+      if (isset($counters[$value])) {
+        $counters[$value]++;
+      }
+      else {
+        $counters[$value] = 0;
+      }
     }
   }
   foreach ($counters as $counter => $count) {
