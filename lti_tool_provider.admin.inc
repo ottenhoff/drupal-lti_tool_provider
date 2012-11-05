@@ -52,12 +52,12 @@ function lti_tool_provider_launch() {
   }
   // Collect the launch information for later storage in the session.
   $launch_info = $request->get_parameters();
-  $domain = lti_tool_provider_retrieve_consumer_domain($oauth_consumer_key);
+  $launch_info['consumer_domain'] = lti_tool_provider_retrieve_consumer_domain($oauth_consumer_key);
   if (isset($launch_info['context_id']) && isset($launch_info['user_id'])) {
-    $lti_user = $launch_info['user_id'] . $domain;
+    $lti_user = $launch_info['user_id'] . $launch_info['consumer_domain'];
   }
   else {
-    $lti_user = 'lti_user' . $domain;
+    $lti_user = 'lti_user' . $launch_info['consumer_domain'];
   }
   // Revalidate incoming user.
   if ($user->uid > 0 && $user->name != $lti_user) {
@@ -80,39 +80,11 @@ function lti_tool_provider_launch() {
       }
     }
     else {
-      // Provision a user account for $lti_user.
-      if (!isset($launch_info['lis_person_contact_email_primary'])) {
-        if ($domain == '') {
-          $mail = $lti_user . '@example.com';
-        }
-        else {
-          $mail = $lti_user . '.example.com';
-        }
-      }
-      else {
-        $mail = $launch_info['lis_person_contact_email_primary'];
-      }
-      $user_attribute_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
-      $fields = lti_tool_provider_retrieve_user_field_types('TEXT');
-      $userinfo = array(
-        'name' => $lti_user,
-        'pass' => user_password(20),
-        'init' => $mail,
-        'mail' => $mail,
-        'status' => 1,
-        'access' => REQUEST_TIME,
-      );
-      foreach ($user_attribute_settings as $variable => $field) {
-        if (($field != 'none') && isset($fields[$field]) && isset($launch_info[$variable])) {
-          $userinfo[$field] = array(LANGUAGE_NONE => array('0' => array('value' => $launch_info[$variable])));
-        }
-      }
-      if (!$account = user_save(drupal_anonymous_user(), $userinfo)) {
-        drupal_set_message(t('User account creation failed because of system problems.'), 'error');
-        return;
-      }
-      drupal_set_message(t('User account created.'), 'info');
+      $account = lti_tool_provider_create_account($lti_user, $launch_info);
     }
+    // Log the user in.
+    $form_state = array('uid' => $account->uid);
+    user_login_submit(array(), $form_state);
   }
   else {
     $account = user_load($user->uid);
@@ -123,81 +95,9 @@ function lti_tool_provider_launch() {
     lti_tool_provider_assign_global_roles_to_user($launch_info['roles'], $account->uid);
   }
   $destination = '';
-  // If unauthenticated, log user in.
-  if ($user->uid == 0) {
-    $form_state = array('uid' => $account->uid);
-    user_login_submit(array(), $form_state);
-  }
-  // Map Group roles based on the user LTI role.
+  // Perform group related actions.
   if (module_exists('og')) {
-    $selected_group_bundle = variable_get('lti_tool_provider_group_mapping_bundle');
-    if ($selected_group_bundle != 'none:None') {
-      // Grant Group Membership and Group Role.
-      $users_groups = og_get_entity_groups('user', $account->uid);
-      // Find the group that matches the lti context_label.
-      $course_found = FALSE;
-      list($group_entity, $group_bundle) = explode(':', variable_get('lti_tool_provider_group_mapping_bundle'));
-      $saved_settings = variable_get('lti_tool_provider_group_mapping', array());
-      $mapping_field = $saved_settings['context_id'];
-      foreach (og_get_all_group($group_entity) as $key => $group_id) {
-        $group_wrapper = entity_metadata_wrapper($group_entity, $group_id);
-        $fields = $group_wrapper->getPropertyInfo();
-        if (isset($fields[$mapping_field]) && $group_wrapper->{$mapping_field}->value() == $launch_info['context_id']) {
-          $course_found = TRUE;
-          $launch_info['course_entity_type'] = $group_entity;
-          $launch_info['course_entity_eid'] = $group_id;
-          // Found the group that matches the context_id.
-          // Add the user to the group.
-          if (!array_key_exists($group_entity, $users_groups) || !in_array($group_id, $users_groups[$group_entity])) {
-            og_group($group_entity, $group_id, array(
-              'entity_type' => 'user',
-              'entity' => $account->uid,
-              'field_name' => FALSE,
-              'state' => OG_STATE_ACTIVE,
-            ));
-          }
-          if (isset($launch_info['roles'])) {
-            $found_roles = lti_tool_provider_search_roles($launch_info['roles']);
-            foreach ($found_roles as $lti_role => $found_role) {
-              og_role_grant($group_entity, $group_id, $account->uid, $found_role);
-            }
-          }
-        }
-      }
-      // Provision group.
-      // FIX THIS does not cope with non-node group bundles.
-      if (!$course_found && ($launch_info['context_id'] != NULL) && (variable_get('lti_tool_provider_provision_groups') == 1) && (user_access('create ' . $group_bundle . ' content', $account))) {
-        $node = new stdClass();
-        $node->type = $group_bundle;
-        $node->language = LANGUAGE_NONE;
-        node_object_prepare($node);
-        $saved_settings = variable_get('lti_tool_provider_group_mapping', array());
-        foreach ($saved_settings as $variable => $field) {
-          if ($field != 'none') {
-            if ($field != 'title') {
-              foreach (field_info_instances($group_entity, $group_bundle) as $entity_field) {
-                if (($field == $entity_field['field_name']) && (strcasecmp($entity_field['widget']['module'], 'text') == 0)) {
-                  $node->{$field}[LANGUAGE_NONE][0]['value'] = $launch_info[$variable];
-                }
-              }
-            }
-            else {
-              $node->$field = $launch_info[$variable];
-            }
-          }
-        }
-        node_save($node);
-        $group_nid = $node->nid;
-        $launch_info['course_entity_type'] = $group_entity;
-        $launch_info['course_entity_eid'] = $group_nid;
-      }
-      if (isset($launch_info['course_entity_eid'])) {
-        $destination = $launch_info['course_entity_type'] . '/' . $launch_info['course_entity_eid'];
-      }
-      else {
-        drupal_set_message(check_plain('No course corresponding to ' . $launch_info['context_label'] . ' exists.'));
-      }
-    }
+    lti_tool_provider_og($account, &$launch_info, &$destination);
   }
   // Save launch information in session.
   $_SESSION['lti_tool_provider_context_info'] = $launch_info;
