@@ -9,7 +9,6 @@
  * Implements hook_install().
  */
 function lti_tool_provider_install() {
-  variable_set('lti_tool_provider_group_mapping_bundle', 'none:None');
   variable_set('lti_tool_provider_global_role_array', array(
     'Learner' => 1,
     'Instructor' => 1,
@@ -20,14 +19,11 @@ function lti_tool_provider_install() {
     'Administrator' => 1,
     'TeachingAssistant' => 1,
   ));
-  variable_set('lti_tool_provider_group_role_array', '');
-  variable_set('lti_tool_provider_provision_groups', '0');
   variable_set('lti_tool_provider_user_attribute_mapping', array(
     'lis_person_name_given' => 'none',
     'lis_person_name_family' => 'none',
     'lis_person_name_full' => 'none',
   ));
-  variable_set('lti_tool_provider_group_mapping', '');
 }
 
 /**
@@ -88,20 +84,9 @@ function lti_tool_provider_schema() {
 }
 
 /**
- * Implements hook_enable().
- */
-function lti_tool_provider_enable() {
-  cache_clear_all('plugins:feeds:plugins', 'cache');
-}
-
-/**
  * Implements hook_uninstall().
  */
 function lti_tool_provider_uninstall() {
-  variable_del('lti_tool_provider_group_mapping_bundle');
   variable_del('lti_tool_provider_global_role_array');
-  variable_del('lti_tool_provider_group_role_array');
-  variable_del('lti_tool_provider_provision_groups');
   variable_del('lti_tool_provider_user_attribute_mapping');
-  variable_del('lti_tool_provider_group_mapping');
 }
