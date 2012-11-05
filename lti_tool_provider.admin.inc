@@ -401,37 +401,6 @@ function lti_tool_provider_global_roles_submit($form, &$form_state) {
 }
 
 /**
- * Update or create a consumer entity.
- *
- * @param array $form
- *   The form.
- * @param array $form_state
- *   The form state.
- */
-function lti_tool_provider_group_mapping_submit($form, &$form_state) {
-  variable_set('lti_tool_provider_group_mapping_bundle', $form_state['values']['bundle']);
-  if ($form_state['values']['bundle'] == 'none:None') {
-    variable_set('lti_tool_provider_provision_groups', 0);
-  }
-  else {
-    variable_set('lti_tool_provider_provision_groups', $form_state['values']['create_course']);
-    $settings = array();
-    foreach (lti_tool_provider_context_mapping_details() as $key => $detail) {
-      if (isset($form_state['input']['mapping'][$key]['attribute'])) {
-        $settings[$detail] = $form_state['input']['mapping'][$key]['attribute'];
-      }
-    }
-    variable_set('lti_tool_provider_group_mapping', $settings);
-    $group_roles = array();
-    foreach (lti_tool_provider_get_lti_roles() as $key => $role) {
-      $group_roles[$role] = $form_state['input']['roles'][$key]['group_role'];
-    }
-    variable_set('lti_tool_provider_group_role_array', $group_roles);
-  }
-  drupal_set_message(t('LTI group mapping saved.'));
-}
-
-/**
  * Generate the consumer admin form.
  *
  * @return array
