@@ -308,6 +308,32 @@ function lti_tool_provider_consumer_delete($entity) {
 }
 
 /**
+ * Retrieves the consumer entity via its consumer key
+ *
+ * @param string $key
+ *   Consumer key
+ * @return object $consumer
+ *   Consumer entity, null if record is unable to be retrieved
+ */
+function lti_tool_provider_get_consumer_by_key($key) {
+  $results_arr = array();
+  $query =new EntityFieldQuery();
+  $query
+  ->entityCondition('entity_type',  'lti_tool_provider_consumer')
+  ->propertyCondition('lti_tool_provider_consumer_key',  $key);
+  $result = $query->execute();
+  $entity_type = 'lti_tool_provider_consumer';
+  if (!empty($result[$entity_type])) {
+    $outcomes = entity_load($entity_type,  array_keys($result[$entity_type]));
+    $consumer = NULL;
+    foreach ($outcomes as $outcome) {
+      $consumer = $outcome;
+    }
+    return $consumer;
+  }
+}
+
+/**
  * Load a consumer.
  *
  * @param integer $id

@@ -93,6 +93,7 @@ function lti_tool_provider_launch() {
   // Map Drupal global roles based on the user LTI role.
   if (isset($launch_info['roles'])) {
     lti_tool_provider_assign_global_roles_to_user($launch_info['roles'], $account->uid);
+    drupal_static_reset('user_access');
   }
   $destination = '';
   module_invoke_all('lti_tool_provider_launch', $launch_info, $account);
