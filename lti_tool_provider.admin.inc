@@ -597,14 +597,19 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
     if (empty($result)) {
       $check_key = TRUE;
     }
-    $query = new EntityFieldQuery();
-    $query
-    ->entityCondition('entity_type', 'lti_tool_provider_consumer')
-    ->propertyCondition('lti_tool_provider_consumer_domain', $form_state['values']['lti_tool_provider_consumer_domain'])
-    ->propertyCondition('lti_tool_provider_consumer_id', $form_state['values']['lti_tool_provider_consumer_id'], '!=');
-    $result = $query->execute();
-    if (empty($result)) {
+    if ($form_state['values']['lti_tool_provider_consumer_domain'] == '') {
       $check_domain = TRUE;
+    }
+    else {
+      $query = new EntityFieldQuery();
+      $query
+      ->entityCondition('entity_type', 'lti_tool_provider_consumer')
+      ->propertyCondition('lti_tool_provider_consumer_domain', $form_state['values']['lti_tool_provider_consumer_domain'])
+      ->propertyCondition('lti_tool_provider_consumer_id', $form_state['values']['lti_tool_provider_consumer_id'], '!=');
+      $result = $query->execute();
+      if (empty($result)) {
+        $check_domain = TRUE;
+      }
     }
   }
   if ($check_key && $check_domain) {
@@ -642,12 +647,12 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
   $entity->lti_tool_provider_consumer_consumer = $form_state['values']['lti_tool_provider_consumer_consumer'];
   $entity->lti_tool_provider_consumer_domain = $form_state['values']['lti_tool_provider_consumer_domain'];
   $entity->lti_tool_provider_consumer_dummy_pref = $form_state['values']['lti_tool_provider_consumer_dummy_pref'];
-  if ($form_state['values']['lti_tool_provider_consumer_dummy_pref']) {
+  if ($form_state['values']['lti_tool_provider_consumer_dummy_pref'] && $form['lti_tool_provider_consumer_dummy_pref']['#default_value'] == 0) {
     lti_tool_provider_create_dummy_account($form_state['values']['lti_tool_provider_consumer_domain']);
     drupal_set_message(t('Dummy user has been created.'));
   }
   else {
-    if ($form_state['values']['lti_tool_provider_consumer_id'] != 0) {
+    if ($form_state['values']['lti_tool_provider_consumer_id'] != 0  && $form_state['values']['lti_tool_provider_consumer_dummy_pref'] == 0 && $form['lti_tool_provider_consumer_dummy_pref']['#default_value'] == 1) {
       lti_tool_provider_remove_dummy_account($form_state['values']['lti_tool_provider_consumer_domain']);
       drupal_set_message(t('Dummy user has been removed.'));
     }

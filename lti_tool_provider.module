@@ -520,27 +520,17 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
   $dummy_name = ($domain == '') ? 'lti_user' : 'lti_user@' . $domain;
   $dummy_acc_arr = array();
   $query = new EntityFieldQuery();
-  if ($domain == NULL) {
-    $query
+   $query
     ->entityCondition('entity_type', 'user')
-    ->propertyCondition('name', $dummy_name, 'EQUALS');
+    ->propertyCondition('name', $dummy_name, '=');
+  $result = $query->execute();
+  if (isset($result['user'])) {
+    user_delete_multiple(array_keys($result['user']));
+    return array_keys($result['user']);
   }
   else {
-    $query
-    ->entityCondition('entity_type', 'user')
-    ->propertyCondition('name', 'lti_user' . $domain, '=');
+    return NULL;
   }
-  $result = $query->execute();
-  $uid = NULL;
-  if (!empty($result['user'])) {
-    $users = entity_load($entity_type, array_keys($result['user']));
-    foreach ($users as $user) {
-      $uid = $user->uid;
-      $dummy_acc_arr[] = $uid;
-    }
-  }
-  user_delete_multiple($dummy_acc_arr);
-  return $dummy_acc_arr;
 }
 
 /**
