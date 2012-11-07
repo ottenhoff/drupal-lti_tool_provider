@@ -44,11 +44,11 @@ else {
     /**
      * Lookup a token.
      *
-     * @param OAuthConsumer $consumer
+     * @param object $consumer
      *   The consumer entity.
      * @param string $token_type
      *   The type of token.
-     * @param OAuthToken $token
+     * @param object $token
      *   The token.
      *
      * @return OAuthToken
@@ -61,9 +61,9 @@ else {
     /**
      * Lookup a nonce (not implemented).
      *
-     * @param OAuthConsumer $consumer
+     * @param object $consumer
      *   The consumer entity.
-     * @param OAuthToken $token
+     * @param object $token
      *   A token.
      * @param string $nonce
      *   A nonce.
@@ -80,7 +80,7 @@ else {
     /**
      * Get a new request token (not implemented).
      *
-     * @param OAuthConsumer $consumer
+     * @param object $consumer
      *   The consumer entity.
      * @param string $callback
      *   A callback.
@@ -96,9 +96,9 @@ else {
     /**
      * Get a new access token (not implemented).
      *
-     * @param OAuthToken $token
+     * @param object $token
      *   A token.
-     * @param OAuthConsumer $consumer
+     * @param object $consumer
      *   A consumer entity.
      * @param string $verifier
      *   The verifier.

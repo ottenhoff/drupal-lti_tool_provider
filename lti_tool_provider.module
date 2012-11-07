@@ -520,7 +520,7 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
   $dummy_name = ($domain == '') ? 'lti_user' : 'lti_user@' . $domain;
   $dummy_acc_arr = array();
   $query = new EntityFieldQuery();
-   $query
+  $query
     ->entityCondition('entity_type', 'user')
     ->propertyCondition('name', $dummy_name, '=');
   $result = $query->execute();
