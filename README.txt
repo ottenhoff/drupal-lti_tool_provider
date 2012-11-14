@@ -36,6 +36,7 @@ have LTI Tool Provider map lis_person_name_full to field_fullname, then use the
 Drupal Realname module to use field_fullname for user name display.
 If provided, the lis_person_contact_email_primary is mapped to the account mail
 field otherwise a dummy email user_id@domain.example.com is used.
+If provided, the user_image is mapped to the account profile picture.
 
 Drupal Role Mapping
 The roles provided from the LMS can be mapped to any Drupal global roles.
