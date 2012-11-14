@@ -94,6 +94,14 @@ will be used as the group title when provisioning groups.
 custom_return_label defines a label to override the default "Return to LMS" menu
 label.
 
+Language
+It is possible to set the language in the Drupal Tool to match the 
+launch_presentation_locale from the LTI launch context. First enable the locale
+core module, then add the languages you wish to support at 
+admin/config/regional/language. Download and install the language translations
+for the languages you chose. Then check the box for Session on
+admin/config/regional/language/configure.
+
 This software was developed as a project of the 
 Centre for Educational Innovation and Technology (The University of Queensland)
 

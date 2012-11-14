@@ -104,6 +104,10 @@ function lti_tool_provider_launch() {
   }
   // Save launch information in session.
   $_SESSION['lti_tool_provider_context_info'] = $launch_info;
+  // Set language in session.
+  if (isset($launch_info['launch_presentation_locale'])) {
+    $_SESSION['language'] = drupal_strtolower($launch_info['launch_presentation_locale']);
+  }
   lti_tool_provider_goto($destination);
   return 'Launched';
 }
@@ -450,25 +454,6 @@ function lti_tool_provider_consumers_admin() {
           'Date Joined' => format_date($entity->date_joined),
         ),
       );
-      $extra_cols = lti_tool_provider_get_extra_columns();
-      if (isset($extra_cols)) {
-        foreach ($extra_cols as $col) {
-          if (!isset($entity->$col)) {
-            $value = 'Not avaliable';
-
-          }
-          else {
-            $value = $entity->$col;
-          }
-          $content['entity_table']['#rows'][$loop_counter]['data'][lti_tool_provider_get_column_desc($entity_type, $col)] = $value;
-        }
-      }
-      $loop_counter++;
-    }
-    if (isset($extra_cols)) {
-      foreach ($extra_cols as $col) {
-        $content['entity_table']['#header'][] = t(lti_tool_provider_get_column_desc($entity_type, $col));
-      }
     }
   }
   else {
