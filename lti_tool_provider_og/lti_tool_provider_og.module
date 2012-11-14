@@ -109,11 +109,11 @@ function lti_tool_provider_og_retrieve_entity_field_types($group_bundle) {
  * - If needed, provision a group.
  * - Set the destination path to the group page.
  *
- * @param unknown $launch_info
+ * @param array $launch_info
  *   The launch info array, modified to add group entity:bundle and id.
  * @param string $destination
  *   The destination path, modified to be the group page.
- * @param unknown $account
+ * @param object $account
  *   The drupal user account of the LTI user.
  */
 function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, &$destination, $account) {
