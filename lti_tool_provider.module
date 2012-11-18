@@ -124,6 +124,7 @@ function lti_tool_provider_menu() {
     'title' => 'View LTI Information',
     'description' => 'View all the LTI context variables.',
     'page callback' => 'lti_tool_provider_info',
+    'access callback' => 'lti_tool_provider_context_access',
     'access arguments' => array('view lti info'),
     'file' => 'lti_tool_provider.admin.inc',
     'weight' => -3,
@@ -139,6 +140,7 @@ function lti_tool_provider_menu() {
     'title' => 'Return to LMS',
     'title callback' => 'lti_tool_provider_return_title',
     'page callback' => 'lti_tool_provider_return',
+    'access callback' => 'lti_tool_provider_context_access',
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'user-menu',
@@ -148,6 +150,7 @@ function lti_tool_provider_menu() {
     'title' => 'Home',
     'title callback' => 'lti_tool_provider_home_title',
     'page callback' => 'lti_tool_provider_home',
+    'access callback' => 'lti_tool_provider_context_access',
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'user-menu',
@@ -157,6 +160,7 @@ function lti_tool_provider_menu() {
     'title' => 'LTI Info',
     'description' => 'View all the LTI context variables.',
     'page callback' => 'lti_tool_provider_info',
+    'access callback' => 'lti_tool_provider_context_access',
     'access arguments' => array('view lti info'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'navigation',
@@ -165,6 +169,23 @@ function lti_tool_provider_menu() {
   return $items;
 }
 
+/**
+ * Access callback that checks for LTI context as well as user access.
+ *
+ * @param string $access
+ *   The access permission requested.
+ *
+ * @return boolean
+ *   TRUE grants access.
+ */
+function lti_tool_provider_context_access($access) {
+  if (isset($_SESSION['lti_tool_provider_context_info']) && user_access($access)) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
 /**
  * Map a user to a drupal Global role based on his/her role in the LTI context.
  *
