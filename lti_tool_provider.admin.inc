@@ -423,10 +423,9 @@ function lti_tool_provider_consumers_admin() {
   );
   $content['table'] = array();
   // Load all of our entities.
-  $entities = lti_tool_provider_consumer_load_multiple();
-  $entity_type = 'lti_tool_provider_consumer';
-  if (!empty($entities)) {
-    $content['entity_table'] = array(
+  $consumers = lti_tool_provider_consumer_load_multiple();
+  if (!empty($consumers)) {
+    $content['consumer_table'] = array(
       '#theme' => 'table',
       '#rows' => array(),
       '#header' => array(
@@ -440,25 +439,46 @@ function lti_tool_provider_consumers_admin() {
       ),
     );
     $loop_counter = 0;
-    foreach ($entities as $entity) {
-      // Create tabular rows for our entities.
-      $content['entity_table']['#rows'][$loop_counter] = array(
-        'data' => array(
-          'id' => $entity->lti_tool_provider_consumer_id,
-          // This statement can create url to view individual keys.
-          'Consumer' => l($entity->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $entity->lti_tool_provider_consumer_id),
-          'Key' => $entity->lti_tool_provider_consumer_key,
-          'Secret' => $entity->lti_tool_provider_consumer_secret,
-          'Domain' => $entity->lti_tool_provider_consumer_domain,
-          'Dummy_Pref' => lti_tool_provider_trans_bool($entity->lti_tool_provider_consumer_dummy_pref),
-          'Date Joined' => format_date($entity->date_joined),
-        ),
+    foreach ($consumers as $key => $consumer) {
+      // Create tabular rows for our entities. 
+      $id = $consumer->lti_tool_provider_consumer_id;
+      // This statement can create url to view individual keys.
+      $consumer_name = l($consumer->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id);
+      $key = $consumer->lti_tool_provider_consumer_key;
+      $secret = $consumer->lti_tool_provider_consumer_secret;
+      $domain = $consumer->lti_tool_provider_consumer_domain;
+      $dummy_pref = lti_tool_provider_trans_bool($consumer->lti_tool_provider_consumer_dummy_pref);
+      $date_joined = format_date($consumer->date_joined);
+      $content['consumer_table'][] = array(
+        'id' => &$id,
+        'Consumer' => &$consumer_name,
+        'Key' => &$key,
+        'Secret' => &$secret,
+        'Domain' => &$domain,
+        'Dummy_Pref' => &$dummy_pref,
+        'Date Joined' => &$date_joined,
       );
+      $content['consumer_table']['#rows'][] = array(
+        array('data' => &$id),
+        array('data' => &$consumer_name),
+        array('data' => &$key),
+        array('data' => &$secret),
+        array('data' => &$domain),
+        array('data' => &$dummy_pref),
+        array('data' => &$date_joined),
+      );
+      unset($id);
+      unset($consumer_name);
+      unset($key);
+      unset($secret);
+      unset($domain);
+      unset($dummy_pref);
+      unset($date_joined);
     }
   }
   else {
     // There were no entities. Tell the user.
-    $content['entity_table'][] = array(
+    $content['consumer_table'][] = array(
       '#type' => 'item',
       '#markup' => t('No LTITP Consumer entities currently exist.'),
     );

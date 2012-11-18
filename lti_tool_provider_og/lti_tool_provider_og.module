@@ -175,6 +175,7 @@ function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, &$de
         }
       }
       node_save($node);
+      drupal_set_message(t('Group created for context.'), 'info');
       $group_nid = $node->nid;
       $launch_info['course_entity_type'] = $group_entity;
       $launch_info['course_entity_eid'] = $group_nid;

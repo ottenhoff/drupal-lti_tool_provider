@@ -6,3 +6,4 @@ files[] = LTIToolProviderConsumerEntityController.class.php
 dependencies[] = entity
 dependencies[] = field
 dependencies[] = libraries
+configure = admin/config/lti-tool-provider
