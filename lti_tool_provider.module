@@ -34,6 +34,19 @@ function lti_tool_provider_init() {
 }
 
 /**
+ * Implements hook_help().
+ */
+function lti_tool_provider_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#lti_tool_provider':
+      $path = drupal_get_path('module', 'lti_tool_provider');
+      $output  = '<p>' . t("Read the <a href='@url'>README.txt</a> file in the LTI Tool Provider module directory.", array('@url' => "/$path/README.txt")) . '</p>';
+      $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's<a href='@docs'>project page</a>.", array('@docs' => 'http://drupal.org/sandbox/jzornig/1809350')) . '</p>';
+      return $output;
+  }
+}
+
+/**
  * Implements hook_permission().
  */
 function lti_tool_provider_permission() {
