@@ -138,7 +138,7 @@ function lti_tool_provider_global_roles($form, &$form_state) {
   foreach (lti_tool_provider_get_lti_roles() as $role) {
     $lti_role = array(
       '#type' => 'item',
-      '#title' => check_plain($role),
+      '#title' => $role,
     );
     $global_role = array(
       '#type' => 'select',
