@@ -21,7 +21,6 @@ function lti_tool_provider_libraries_info() {
   );
   return $libraries;
 }
-
 /**
  * Implements hook_registry_files_alter().
  */
@@ -33,8 +32,8 @@ function lti_tool_provider_registry_files_alter(&$files, $modules) {
     'module' => 'lti_tool_provider',
     'weight' => 0,
   );
+  dpm($files, 'files');
 }
-
 /**
  * Implements hook_help().
  */

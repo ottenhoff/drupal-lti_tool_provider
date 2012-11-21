@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+local.files.filterStringDialog=/Users/uqjzorni/Development/lti_tool_provider/lti_tool_provider
+org.eclipse.rse.preferences.order.connections=jz-macbookpro.Local;jz-macbookpro.sandbox.ceit.uq.edu.au;jz-macbookpro.dev.ceit.uq.edu.au
+ssh.files.filterStringDialog=/var/www/html/drupal7/sites/all/modules/lti_tool_provider

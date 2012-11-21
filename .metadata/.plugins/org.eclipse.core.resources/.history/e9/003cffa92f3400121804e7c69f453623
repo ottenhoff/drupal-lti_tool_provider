@@ -23,19 +23,6 @@ function lti_tool_provider_libraries_info() {
 }
 
 /**
- * Implements hook_registry_files_alter().
- */
-function lti_tool_provider_registry_files_alter(&$files, $modules) {
-  drupal_load('module', 'libraries');
-  $path = libraries_get_path('oauth');
-  $path = ($path . '/OAuth.php');
-  $files[$path] = array(
-    'module' => 'lti_tool_provider',
-    'weight' => 0,
-  );
-}
-
-/**
  * Implements hook_help().
  */
 function lti_tool_provider_help($path, $arg) {
