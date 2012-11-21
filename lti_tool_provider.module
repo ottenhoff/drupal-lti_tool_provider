@@ -12,7 +12,7 @@ function lti_tool_provider_libraries_info() {
   $libraries['oauth'] = array(
     'name' => 'OAuth library',
     'vendor url' => 'http://oauth.googlecode.com',
-    'download url' => 'http://oauth.googlecode.com/svn/code/php/OAuth.php',
+    'download url' => 'https://github.com/juampy72/OAuth-PHP',
     'version' => '1.0',
     // 'version callback' => '_lti_tool_provider_oauth_version',
     'files' => array(
@@ -20,17 +20,6 @@ function lti_tool_provider_libraries_info() {
     ),
   );
   return $libraries;
-}
-
-/**
- * Implements hook_init().
- */
-function lti_tool_provider_init() {
-  $library = libraries_load('oauth');
-  if ($library['loaded'] === FALSE) {
-    drupal_set_message(t('LTI Tool Provider requires the OAuth library, install library and clear cache. Error: @error', array('@error' => $library['error'])), 'error');
-  }
-  return;
 }
 
 /**
@@ -787,3 +776,4 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   }
   return $account;
 }
+
