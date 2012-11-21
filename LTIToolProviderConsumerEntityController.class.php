@@ -97,7 +97,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    * @param object $entity
    */
   public function delete($entity) {
-    $this->delete_multiple(array($entity));
+    $this->deleteMultiple(array($entity));
   }
 
   /**
@@ -107,7 +107,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    *
    * @throws Exception
    */
-  public function delete_multiple($entities) {
+  public function deleteMultiple($entities) {
     $ids = array();
     if (!empty($entities)) {
       $transaction = db_transaction();
