@@ -128,14 +128,14 @@ function lti_tool_provider_menu() {
     'page callback' => 'lti_tool_provider_info',
     'access callback' => 'lti_tool_provider_context_access',
     'access arguments' => array('view lti info'),
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider.operations.inc',
     'weight' => -3,
   );
   $items['lti'] = array(
     'title' => 'LTI',
     'page callback' => 'lti_tool_provider_launch',
     'access callback' => TRUE,
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider.operations.inc',
     'type' => MENU_CALLBACK,
   );
   $items['lti-tool-provider/return'] = array(
@@ -146,7 +146,7 @@ function lti_tool_provider_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'user-menu',
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider.operations.inc',
   );
   $items['lti-tool-provider/home'] = array(
     'title' => 'Home',
@@ -156,7 +156,7 @@ function lti_tool_provider_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'user-menu',
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider.operations.inc',
   );
   $items['lti-tool-provider/info'] = array(
     'title' => 'LTI Info',
@@ -166,7 +166,7 @@ function lti_tool_provider_menu() {
     'access arguments' => array('view lti info'),
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'navigation',
-    'file' => 'lti_tool_provider.admin.inc',
+    'file' => 'lti_tool_provider.operations.inc',
   );
   return $items;
 }
