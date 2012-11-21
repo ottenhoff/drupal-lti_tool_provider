@@ -1,0 +1,9 @@
+name = LTI Tool Provider Outcomes
+description = An LTI Tool Provider add-on module which communicates with a Tool Consumer's Outcomes Services
+core = 7.x
+version = 7.x-1.x-dev
+project = lti_tool_provider
+files[] = lti_tool_provider_outcomes.module
+files[] = lti_tool_provider_outcomes.install
+files[] = lti_tool_provider_outcomes_connect.inc
+dependencies[] = lti_tool_provider

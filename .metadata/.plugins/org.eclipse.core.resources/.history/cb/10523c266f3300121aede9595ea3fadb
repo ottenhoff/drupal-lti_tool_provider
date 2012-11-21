@@ -1,0 +1,9 @@
+name = LTI Tool Provider
+description = An LTI Tool Provider module for LMS/Drupal integration.
+core = 7.x
+files[] = LTIToolProviderOAuthDataStore.class.php
+files[] = LTIToolProviderConsumerEntityController.class.php
+dependencies[] = entity
+dependencies[] = field
+dependencies[] = libraries
+configure = admin/config/lti-tool-provider

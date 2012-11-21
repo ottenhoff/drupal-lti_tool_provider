@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="263" key="DIALOG_WIDTH"/>
+		<item value="729" key="DIALOG_Y_ORIGIN"/>
+		<item value="399" key="DIALOG_HEIGHT"/>
+		<item value="1638" key="DIALOG_X_ORIGIN"/>
+		<item value="1|Lucida Grande|11.0|0|COCOA|1|LucidaGrande" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="true" key="wrap"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
+		<item value="false" key="incremental"/>
+		<item value="false" key="wholeword"/>
+		<item value="lti_tool_provider_outcomes_valid_session_access" key="selection"/>
+		<list key="findhistory">
+			<item value="lti_tool_provider_outcomes_valid_session_access"/>
+			<item value="lti_tool_provider_get_column_desc"/>
+			<item value="lti_tool_provider_outcomes_current_resource_access"/>
+			<item value="lti_tool_provider_outcomes_resource_manage_form"/>
+			<item value="lti_tool_provider_outcomes_pull_results"/>
+			<item value="lti_tool_provider_outcomes_resource_confirm_change_form"/>
+			<item value="lti_tool_provider_outcomes_confirm_delete_form"/>
+			<item value="lti_tool_provider_outcomes_outcomes_manage_form_submit"/>
+		</list>
+		<list key="replacehistory">
+			<item value="LTIToolProvider"/>
+			<item value="lti_tool_provider_outcomes_send_all_results_for_resource"/>
+			<item value="lti_tool_provider_olti_tool_provider_outcomes_outcome_for_user_and_resourceutcomes_create_set_outcomes"/>
+			<item value="lti_tool_provider_outcomes_create_set_outcomes"/>
+			<item value="lti_tool_provider_outcomes_get_set_resource"/>
+		</list>
+	</section>
+</section>

@@ -1,0 +1,196 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function uq_teams_menu() {
+  $items = array();
+
+  $items['node/%node/teams'] = array(
+    'title' => 'Form Teams',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('uq_teams_wizard_form', 1),
+    'access callback' => 'uq_teams_course_teams_admin_access',
+    'access arguments' => array(1),
+    'file' => 'uq_teams.wizard.inc',
+    'weight' => 4,
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function uq_teams_permission()  {
+  return array(
+    'administer uq_teams' => array(
+      'title' => t('Administer uq teams'),
+    ),
+    'access uq_teams' => array(
+      'title' => t('Access uq teams'),
+    ),
+    'select focus' => array(
+      'title' => t('Select Project Focus'),
+    ),
+  );
+}
+
+/**
+ *
+ */
+function uq_teams_course_teams_admin_access($node)  {
+  if(user_access('administer uq_teams') && ($node->type == 'course')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ *
+ * @param object $node
+ * @return boolean
+ */
+function check_course_node($node) {
+  if (($node->type === 'course') && (user_access('administer content'))) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Adds the option to map Teams to Feeds Import configuration
+ *
+ * @param unknown $targets
+ * @param unknown $entity_type
+ * @param unknown $bundle_name
+ */
+function uq_teams_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
+  // add in an organic groups map if it exists
+  if (module_exists('og')) {
+    $targets['teams'] = array(
+      'name' => t('Team'),
+      'description' => t('Create then assign student to a team'),
+      'callback' => 'uq_teams_feeds_set_teams_target',
+    );
+  }
+}
+
+/**
+ * Gives Drupal role to user if not previously assigned
+ *
+ * @param unknown $source
+ * @param unknown $entity
+ * @param unknown $target
+ * @param unknown $value
+ * @return boolean
+ */
+function uq_teams_feeds_set_teams_target($source, $entity, $target, $value) {
+  // Get rid of leading and trailing whitespace
+  $teamTitle = trim($value);
+  // Perform a query to obtain the entity id/s of a team title
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'node')
+  ->propertyCondition('title', $teamTitle)
+  ->propertyCondition('status', 1)
+  ->execute();
+  // Create the team if it does not exist in system
+  // If more than one team in system with name do not assign team to user
+  // and present error message
+  if (count($entities['node']) === 0) {
+    $node = new stdClass();
+    $node->type = 'team';
+    $node->title = $teamTitle;
+    $node->uid = 1;
+    $node->name = 'admin';
+    $node->comment = 0;
+    $node->promote = 0;
+    $node->language = 'und';
+    // Organic groups fields
+    $node->og_description = 'A group managed by admin';
+    $node->og_register = 0;
+    $node->og_register = 0;
+    $node->og_directory = 0;
+    $node->og_private = 1;
+    $node->og_selective = 3;
+    // Create the node
+    $teamRef = node_submit($node);
+    node_save($node);
+    // Associate new team with a course
+    // TODO: Need to set course ID via mapper NOT by hardcoding it!!!
+    og_group('node', 4, array(
+    'entity_type' => 'node',
+    'entity' => $node,
+    'membership_type' => OG_MEMBERSHIP_TYPE_DEFAULT,
+    ));
+  }
+  elseif (count($entities['node']) === 1) {
+    // Obtain team entity array
+    $teamRef = array_shift($entities['node']);
+  }
+  else {
+    drupal_set_message('More than one team in the system with "'
+      . $teamTitle . '" as the title. Team not assigned.', 'error');
+      return FALSE;
+  }
+  $numTargets = 0;
+  $found = -1;
+  // Check to see if user is already a member
+  if (isset($entity->og_user_group_ref)) {
+    foreach ($entity->og_user_group_ref['und'] as $key => $membership) {
+      if ($membership['target_id'] === $teamRef->nid) {
+        $found = $key;
+      }
+      $numTargets++;
+    }
+    // Grant user membership without overriding previous memberships
+    if ($found === -1) {
+      $entity->og_user_group_ref['und'][$numTargets]['target_id'] = $teamRef->nid;
+    }
+    else {
+      drupal_set_message('User is already a member of Team with "' . $teamTitle
+      . '" as the title.', 'error');
+      return FALSE;
+    }
+  }
+  else {
+    // Directly grant user team membership since no existing group memberships
+    $entity->og_user_group_ref['und'][0]['target_id'] = $teamRef->nid;
+  }
+  return TRUE;
+}
+
+/**
+ * Implements hook_feeds_plugins
+ */
+function uq_teams_feeds_plugins() {
+  $path = drupal_get_path('module', 'uq_teams');
+  $info = array();
+  $info['FeedsMembershipProcessor'] = array(
+    'name' => 'OG membership processor',
+    'description' => 'Create OG memberships with fields.',
+    'help' => 'Create OG memberships with fields from parsed content.',
+    'handler' => array(
+      'parent' => 'FeedsProcessor',
+      'class' => 'FeedsMembershipProcessor',
+      'file' => 'FeedsMembershipProcessor.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
+
+/**
+ * 
+ * @return multitype:multitype:string
+ */
+function uq_teams_theme() {
+  return array(
+    // Theme function for the 'parent/child' example
+    'uq_teams_wizard_form' => array(
+      'render element' => 'form',
+      'file' => 'uq_teams.wizard.inc',
+    ),
+  );
+}

@@ -1,0 +1,74 @@
+<?php
+/**
+ * @file
+ * Contains all related outcomes resource entity functions.
+ * Entity views are found here.
+ */
+
+/**
+ * Save a Resource.
+ *
+ * @param object $entity
+ *   Resource entity
+ */
+function lti_tool_provider_outcomes_resource_save(&$entity) {
+  return entity_get_controller('lti_tool_provider_outcomes_resource')->save($entity);
+}
+
+/**
+ * Delete A Resource.
+ *
+ * @param object $entity
+ *   Resource entity
+ */
+function lti_tool_provider_outcomes_resource_delete($entity) {
+  entity_get_controller('lti_tool_provider_outcomes_resource')->delete($entity);
+}
+
+/**
+ * Get the URL to view a Outcome record.
+ *
+ * @param object $resource
+ *   Resource entity
+ * @return array
+ *   URI array
+ */
+function lti_tool_provider_outcomes_resource_uri($resource) {
+  return array(
+    'path' => 'admin/config/lti-tool-provider/outcomes-resource/view/' . $resource->id, 
+  );
+}
+/**
+ * Load a Resource Entity.
+ *
+ * @param int $id
+ *   Resource entity id
+ * @param boolean $reset
+ *   Boolean for reset option
+ * @return object
+ *   Resource entity
+ */
+function lti_tool_provider_outcomes_resource_load($id = NULL, $reset = FALSE) {
+  $ids = (isset($id) ? array($id) : array());
+  $obj = lti_tool_provider_outcomes_resource_load_multiple($ids, $reset);
+  return $obj ? reset($obj) : FALSE;
+}
+
+/**
+ * Load mutiple Resource Entities.
+ *
+ * @param int $ids
+ *   Array of ids
+ * @param array $conditions
+ *   Conditions for loading
+ * @param boolean $reset
+ *   Boolean for reset option
+ * @return array
+ *   Array of resource entities
+ */
+function lti_tool_provider_outcomes_resource_load_multiple($ids = FALSE, $conditions = array(), $reset = FALSE) {
+  return entity_load('lti_tool_provider_outcomes_resource', $ids, $conditions, $reset);
+}
+
+
+

@@ -205,57 +205,65 @@ function lti_tool_provider_consumers_admin() {
   $content['table'] = array();
   // Load all of our entities.
   $consumers = lti_tool_provider_consumer_load_multiple();
-  $content['consumer_table'] = array(
-    '#theme' => 'table',
-    '#rows' => array(),
-    '#header' => array(
-      t('ID'),
-      t('Consumer'),
-      t('Key'),
-      t('Secret'),
-      t('Domain'),
-      t('Dummy Account'),
-      t('Date Joined'),
-    ),
-  );
-  $loop_counter = 0;
-  foreach ($consumers as $key => $consumer) {
-    // Create tabular rows for our entities. 
-    $id = $consumer->lti_tool_provider_consumer_id;
-    // This statement can create url to view individual keys.
-    $consumer_name = l($consumer->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id);
-    $key = $consumer->lti_tool_provider_consumer_key;
-    $secret = $consumer->lti_tool_provider_consumer_secret;
-    $domain = $consumer->lti_tool_provider_consumer_domain;
-    $dummy_pref = lti_tool_provider_trans_bool($consumer->lti_tool_provider_consumer_dummy_pref);
-    $date_joined = format_date($consumer->date_joined);
-    $content['consumer_table'][] = array(
-      'id' => &$id,
-      'Consumer' => &$consumer_name,
-      'Key' => &$key,
-      'Secret' => &$secret,
-      'Domain' => &$domain,
-      'Dummy_Pref' => &$dummy_pref,
-      'Date Joined' => &$date_joined,
+  if (!empty($consumers)) {
+    $content['consumer_table'] = array(
+      '#theme' => 'table',
+      '#rows' => array(),
+      '#header' => array(
+        t('ID'),
+        t('Consumer'),
+        t('Key'),
+        t('Secret'),
+        t('Domain'),
+        t('Dummy Account'),
+        t('Date Joined'),
+      ),
     );
-    $content['consumer_table']['#rows'][] = array(
-      array('data' => &$id),
-      array('data' => &$consumer_name),
-      array('data' => &$key),
-      array('data' => &$secret),
-      array('data' => &$domain),
-      array('data' => &$dummy_pref),
-      array('data' => &$date_joined),
-    );
-    unset($id);
-    unset($consumer_name);
-    unset($key);
-    unset($secret);
-    unset($domain);
-    unset($dummy_pref);
-    unset($date_joined);
+    $loop_counter = 0;
+    foreach ($consumers as $key => $consumer) {
+      // Create tabular rows for our entities. 
+      $id = $consumer->lti_tool_provider_consumer_id;
+      // This statement can create url to view individual keys.
+      $consumer_name = l($consumer->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id);
+      $key = $consumer->lti_tool_provider_consumer_key;
+      $secret = $consumer->lti_tool_provider_consumer_secret;
+      $domain = $consumer->lti_tool_provider_consumer_domain;
+      $dummy_pref = lti_tool_provider_trans_bool($consumer->lti_tool_provider_consumer_dummy_pref);
+      $date_joined = format_date($consumer->date_joined);
+      $content['consumer_table'][] = array(
+        'id' => &$id,
+        'Consumer' => &$consumer_name,
+        'Key' => &$key,
+        'Secret' => &$secret,
+        'Domain' => &$domain,
+        'Dummy_Pref' => &$dummy_pref,
+        'Date Joined' => &$date_joined,
+      );
+      $content['consumer_table']['#rows'][] = array(
+        array('data' => &$id),
+        array('data' => &$consumer_name),
+        array('data' => &$key),
+        array('data' => &$secret),
+        array('data' => &$domain),
+        array('data' => &$dummy_pref),
+        array('data' => &$date_joined),
+      );
+      unset($id);
+      unset($consumer_name);
+      unset($key);
+      unset($secret);
+      unset($domain);
+      unset($dummy_pref);
+      unset($date_joined);
+    }
   }
-  $content['consumer_table']['#empty'] = t('No LTITP Consumer entities currently exist.');
+  else {
+    // There were no entities. Tell the user.
+    $content['consumer_table'][] = array(
+      '#type' => 'item',
+      '#markup' => t('No LTITP Consumer entities currently exist.'),
+    );
+  }
   return $content;
 }
 

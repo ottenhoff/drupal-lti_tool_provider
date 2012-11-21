@@ -1,0 +1,11 @@
+name = LTI Tool Provider Memberships
+description = An LTI Tool Provider submodule for the memberships service.
+core = 7.x
+version = 7.x-1.x-dev
+project = lti_tool_provider
+files[] = lti_tool_provider_memberships.module
+files[] = LTIToolProviderMembershipsContextEntityController.class.php
+files[] = LTIToolProviderMembershipsEntityController.class.php
+dependencies[] = lti_tool_provider
+dependencies[] = entity
+dependencies[] = field

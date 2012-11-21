@@ -1,0 +1,751 @@
+<?php
+/**
+ * @file
+ * Entity for outcomes. Contains all related outcomes entity functions.
+ * Entity views are found here
+ */
+
+/**
+ * Adds an Outcome.
+ *
+ * @return array
+ *   Outcome Add form
+ */
+function lti_tool_provider_outcomes_add() {
+  // Create a basic entity structure to be used and passed to the validation
+  // and submission functions.
+  $entity = entity_get_controller('lti_tool_provider_outcomes')->create();
+  return drupal_get_form('lti_tool_provider_outcomes_form' , $entity);
+}
+
+/**
+ * Save an Outcome.
+ *
+ * @param object $entity
+ *   Outcome entity
+ */
+function lti_tool_provider_outcomes_save(&$entity) {
+  return entity_get_controller('lti_tool_provider_outcomes')->save($entity);
+}
+
+/**
+ * Delete an Outcome.
+ *
+ * @param object $entity
+ *   Outcome entity
+ */
+function lti_tool_provider_outcomes_delete($entity) {
+  entity_get_controller('lti_tool_provider_outcomes')->delete($entity);
+}
+
+/**
+ * Get the url to view a Outcome record.
+ *
+ * @param object $outcome
+ *   Outcome entity
+ * @return array
+ *   Uri array
+ * */
+function lti_tool_provider_outcomes_uri($outcome) {
+  return array(
+    'path' => 'ltitp-outcomes/view/' . $outcome->id ,
+  );
+}
+
+/**
+ * Retreives all the Outcome Entities.
+ *
+ * @return array
+ *   Array for constructing the form
+ */
+function lti_tool_provider_outcomes_list_entities() {
+  $content = array();
+  // Load all of our entities.
+  $entities = lti_tool_provider_outcomes_load_multiple();
+  if (!empty($entities)) {
+    foreach ( $entities as $entity ) {
+      // Create tabular rows for our entities.
+      $username = lti_tool_provider_outcomes_get_username($entity->lti_tool_provider_outcomes_user_id);
+      $rows[] = array(
+        'data' => array(
+          l($entity->lti_tool_provider_outcomes_id , 'ltitp-outcomes/view/' . $entity->lti_tool_provider_outcomes_id) ,
+          array( 'data' => lti_tool_provider_outcomes_shorten_string($entity-> lti_tool_provider_outcomes_result_sourcedid , 40) , 'title' => $entity-> lti_tool_provider_outcomes_result_sourcedid ) ,
+          l($username , '/user/' . $entity->lti_tool_provider_outcomes_user_id) ,
+          $entity->lti_tool_provider_outcomes_score ,
+          lti_tool_provider_outcomes_get_datatype_by_resource($entity->lti_tool_provider_outcomes_resource_entity_id_fk , 1) ,
+          format_date($entity->lti_tool_provider_outcomes_date_joined) ,
+          isset($entity->lti_tool_provider_outcomes_timestamp) ? format_date($entity->lti_tool_provider_outcomes_timestamp) : 'Score yet to be sent.',
+          isset($entity -> lti_tool_provider_outcomes_last_updated) ? format_date($entity -> lti_tool_provider_outcomes_last_updated) : 'Yet to be updated',
+        ) ,
+      );
+    }
+    // Put our entities into a themed table. See theme_table() for details.
+    $content['entity_table'] = array(
+      '#theme' => 'table' ,
+      '#rows' => $rows ,
+      '#header' => array(t('ID') , t('Result Source DID') , t('Username') , t('Score') , t('Score Data-type') , t('Date Joined') , t('Last Sent') , t('Score Last Updated')) ,
+    );
+  }
+  else {
+    // There were no entities. Tell the user.
+    $content[] = array(
+      '#type' => 'item' ,
+      '#markup' => t('No LTITP Outcomes entities currently exist.') ,
+    );
+  }
+  return $content;
+}
+
+/**
+ * Load Outcome Entities.
+ *
+ * @param int $id
+ *   Outcomes record ids
+ * @param boolean $reset
+ *   Boolean option for reset
+ * @return object
+ *   The outcomes object.
+ */
+function lti_tool_provider_outcomes_load($id = NULL , $reset = FALSE) {
+  $ids = (isset($id) ? array($id) : array());
+  $obj = lti_tool_provider_outcomes_load_multiple($ids , $reset);
+  return $obj ? reset($obj) : FALSE;
+}
+
+/**
+ * Load mutiple Outcomes Entities.
+ *
+ * @param int $ids
+ *   Outcomes entities ids
+ * @param array $conditions
+ *   Array of conditions
+ * @param boolean $reset
+ *   Boolean option for reset
+ * @return array
+ *   An array of outcomes objects.
+ */
+function lti_tool_provider_outcomes_load_multiple($ids = FALSE , $conditions = array() , $reset = FALSE) {
+  return entity_load('lti_tool_provider_outcomes' , $ids , $conditions , $reset);
+}
+
+/**
+ * View a single outcome entity.
+ *
+ * @param object $entity
+ *   Outcome entity
+ * @param string $view_mode
+ *   String for view mode option
+ * @return array
+ *   The content array from the entity.
+ */
+function lti_tool_provider_outcomes_view($entity , $view_mode = 'tweaky') {
+  $entity_type = 'lti_tool_provider_outcomes';
+  $entity->content = array(
+    '#view_mode' => $view_mode ,
+  );
+  field_attach_prepare_view($entity_type , array($entity->lti_tool_provider_outcomes_id => $entity) ,
+    $view_mode);
+  entity_prepare_view($entity_type , array($entity->lti_tool_provider_outcomes_id => $entity));
+  $entity->content += field_attach_view($entity_type , $entity , $view_mode);
+  $entity->content['lti_tool_provider_outcomes_id'] = array(
+    '#type' => 'item' ,
+    '#title' => t('ID') ,
+    '#markup' => $entity->lti_tool_provider_outcomes_id ,
+  );
+  $entity->content['lti_tool_provider_outcomes_resource_entity_id_fk'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Resouce Title') ,
+    '#markup' => lti_tool_provider_outcomes_retrieves_resource_title($entity-> lti_tool_provider_outcomes_resource_entity_id_fk),
+  );
+  $entity->content['lti_tool_provider_outcomes_result_sourcedid'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Result Source DID') ,
+    '#markup' => $entity->lti_tool_provider_outcomes_result_sourcedid ,
+  );
+  $entity->content['lti_tool_provider_outcomes_username'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Username') ,
+    '#markup' => lti_tool_provider_outcomes_get_username($entity->lti_tool_provider_outcomes_user_id) ,
+  );
+  $entity->content['lti_tool_provider_outcomes_score'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Score') ,
+    '#markup' => $entity->lti_tool_provider_outcomes_score ,
+  );
+  $entity->content['lti_tool_provider_outcomes_date_joined'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Date Joined') ,
+    '#markup' => format_date($entity->lti_tool_provider_outcomes_date_joined) ,
+  );
+  $entity->content['lti_tool_provider_outcomes_timestamp'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Date Which score is last sent') ,
+    '#markup' => isset($entity->lti_tool_provider_outcomes_timestamp) ? format_date($entity->lti_tool_provider_outcomes_timestamp) : 'Yet to be updated',
+  );
+  $entity->content['lti_tool_provider_outcomes_date_joined'] = array(
+    '#type' => 'item' ,
+    '#title' => t('Date Last updated') ,
+    '#markup' => isset($entity->lti_tool_provider_outcomes_date_joined) ? format_date($entity->lti_tool_provider_outcomes_date_joined) : 'Yet to be updated',
+  );
+  global $language;
+  $langcode = $language->language ;
+  $entity->content['#language'] = $langcode;
+  module_invoke_all('entity_view' , $entity , $entity_type , $view_mode ,
+    $langcode);
+  drupal_alter(array('lti_tool_provider_outcomes_view' , 'entity_view') ,
+    $entity->content , $entity_type);
+  return $entity->content;
+}
+
+/**
+ * Manage Outcomes Page.
+ *
+ * @return array
+ *   The content array of the display
+ */
+function lti_tool_provider_outcomes_info_page() {
+  $content['preface'] = array(
+    '#type' => 'item' ,
+    '#markup' => t('LTITP Outcomes Entity Adminstration.')
+  );
+  // This disables the add function for LTITP Outcomes. This process should be automated
+  //   if (user_access('administer ltitp_outcomes_module')) {
+  //     $content['preface']['#markup'] =  t('Add new LTI Outcomes !link.' ,
+  //       array('!link' => l(t('here') , 'ltitp-outcomes/add'))
+  //     );
+  //   }
+  $content['table'] = lti_tool_provider_outcomes_list_entities();
+
+  return $content;
+}
+
+/**
+ * Adminstrate Outcomes.
+ *
+ * @return array
+ *   The content array of the display
+ */
+function lti_tool_provider_outcomes_admin_page() {
+  $content = array();
+  $content[] = array(
+    '#type' => 'item' ,
+    '#markup' => t('Administration page for LTI Tool Outcomes.') ,
+  );
+  //   $content[] = array(
+  //     '#type' => 'item' ,
+  //     '#markup' => l(t('Add a new LTI Tool Outcomes') , 'ltitp-outcomes/add') ,
+  //   );
+  $content['table'] = lti_tool_provider_outcomes_list_entities();
+  return $content;
+}
+
+/**
+ * Returns the form for Outcomes Record.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ * @param object $entity
+ *   Outcomes entity
+ * @return array
+ *   The form content
+ */
+function lti_tool_provider_outcomes_form($form , &$form_state , $entity) {
+  // Resource Selection based on the Consumer
+  $consumer_key = isset($_SESSION['_ltitp_context_info']['oauth_consumer_key']) ? $_SESSION['_ltitp_context_info']['oauth_consumer_key'] : NULL;
+  $consumer = lti_tool_provider_get_consumer_by_key($consumer_key);
+  $consumer_id = isset($consumer -> lti_tool_provider_consumer_id) ? $consumer -> lti_tool_provider_consumer_id : NULL;
+  $records = lti_tool_provider_outcomes_retrieves_resource_records($consumer_id);
+  $arr = array();
+  if (isset($records)) {
+    $form['lti_tool_provider_outcomes_result_sourcedid'] = array(
+      '#type' => 'textfield' ,
+      '#title' => t('Result Value Source DIDs') ,
+      '#required' => TRUE ,
+      '#default_value' => $entity->lti_tool_provider_outcomes_result_sourcedid ,
+      '#maxlength' => 1024 ,
+    );
+    if ($entity->lti_tool_provider_outcomes_user_id != 0) {
+      $account = (user_load($entity->lti_tool_provider_outcomes_user_id));
+      $form['lti_tool_provider_outcomes_username'] = array(
+        '#type' => 'textfield' ,
+        '#title' => t('Username') ,
+        '#required' => TRUE ,
+        '#default_value' => $account -> name ,
+      );
+    }
+    else {
+      $form['lti_tool_provider_outcomes_username'] = array(
+        '#type' => 'textfield' ,
+        '#title' => t('Username') ,
+        '#required' => TRUE ,
+      );
+    }
+    $form['lti_tool_provider_outcomes_score'] = array(
+      '#type' => 'textfield' ,
+      '#title' => t('Score') ,
+      '#required' => TRUE ,
+      '#default_value' => $entity -> lti_tool_provider_outcomes_score ,
+    );
+    foreach ($records as $record) {
+      $arr[] = $record -> lti_tool_provider_outcomes_resource_resource_link_title;
+    }
+    $form['lti_tool_provider_outcomes_resource_entity_id_fk_options'] = array(
+      '#type' => 'value' ,
+      '#value' => $records ,
+    );
+    $form['lti_tool_provider_outcomes_resource_entity_id_fk'] = array(
+      '#type' => 'select',
+      '#options' => $arr,
+      '#default_value' => array_search( lti_tool_provider_outcomes_retrieves_resource_title($entity -> lti_tool_provider_outcomes_resource_entity_id_fk) , $arr),
+    );
+    $form['lti_tool_provider_outcomes_id'] = array(
+      '#type' => 'value' ,
+      '#value' => $entity->lti_tool_provider_outcomes_id ,
+    );
+    $form['lti_tool_provider_outcomes_user_id'] = array(
+      '#type' => 'value' ,
+      '#value' => $entity->lti_tool_provider_outcomes_user_id ,
+    );
+    $form['lti_tool_provider_outcomes'] = array(
+      '#type' => 'value' ,
+      '#value' => $entity ,
+    );
+    field_attach_form('lti_tool_provider_outcomes' , $entity , $form , $form_state);
+    $form['submit'] = array(
+      '#type' => 'submit' ,
+      '#value' => t('Save') ,
+      '#weight' => 100 ,
+    );
+    // Ensure the delete button do not appear on the add page
+    if (current_path() != "ltitp-outcomes/add") {
+      $form['delete'] = array(
+        '#type' => 'submit' ,
+        '#value' => t('Delete') ,
+        '#submit' => array('lti_tool_provider_outcomes_edit_delete') ,
+        '#weight' => 200 ,
+      );
+    }
+  }
+  else {
+    $form['empty_warning'] = array(
+      '#type' => 'item' ,
+      '#markup' => t('There is no outcome resource avaiable.') ,
+    );
+  }
+  return $form;
+}
+
+// function theme_lti_tool_provider_outcomes_form($variables) {
+//   dpm('test');
+//   $form = $variables['form'];
+//   $output = '';
+//   $output .= drupal_render($form['lti_tool_provider_outcomes_result_sourcedid']);
+//   $output .= drupal_render($form['lti_tool_provider_outcomes_context_id']);
+//   $output .= drupal_render($form['lti_tool_provider_outcomes_username']);
+//   $output .= drupal_render($form['lti_tool_provider_outcomes_score']);
+//   $output .= drupal_render($form['lti_tool_provider_outcomes_resource_entity_id_fk']);
+//   $rows = array();
+//   $table_attributes = array( 'width' => '30%' );
+//   $rows[] = array(
+//     array( 'data' => drupal_render($form['lti_tool_provider_outcomes_resource_entity_id_fk']) , 'width' => '40%') ,
+//     array( 'data' => 'test' , 'width' => '40%') ,
+//   );
+//   $header = array(
+//     'Resource Mapping' ,
+//     'Datatype'
+//   );
+//   dpm(theme('table', $header, $rows, $table_attributes));
+//   //
+//   $output .= theme('table', $header, $rows, $table_attributes);
+//   //   $output . = theme('table',  array('header' => $header,  'rows' => $rows));
+//   $output .= drupal_render_children($form);
+//   return $output;
+// }
+
+/**
+ * Validate callback for the Outcomes Form.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_outcomes_form_validate($form , &$form_state) {
+  if (!($form_state['clicked_button']['#value'] == 'delete')) {
+    if (!($account = user_load_by_name($form_state['values']['lti_tool_provider_outcomes_username']))) {
+      form_set_error('' , t('The username is invalid'));
+    }
+    else {
+      $records = $form_state['values']['lti_tool_provider_outcomes_resource_entity_id_fk_options'];
+      $selected_index = $form_state['values']['lti_tool_provider_outcomes_resource_entity_id_fk'];
+      $record = $records[$selected_index];
+      if ( lti_tool_provider_outcomes_validate_score( isset($record -> lti_tool_provider_outcomes_resource_score_datatype) ? $record -> lti_tool_provider_outcomes_resource_score_datatype : 'decimal', $form_state['values']['lti_tool_provider_outcomes_score'])) {
+        $form_state['values']['lti_tool_provider_outcomes_user_id'] = $account -> uid;
+      }
+      else {
+        form_set_error('' , check_plain(t('The score must be of appropriate format of DATATYPE:' . $record -> lti_tool_provider_outcomes_resource_score_datatype)));
+      }
+    }
+  }
+}
+
+/**
+ * Submit handler for the outcomes form.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_outcomes_form_submit($form , &$form_state) {
+  $entity = $form_state['values']['lti_tool_provider_outcomes'];
+  $records = $form_state['values']['lti_tool_provider_outcomes_resource_entity_id_fk_options'];
+  $selected_index = $form_state['values']['lti_tool_provider_outcomes_resource_entity_id_fk'];
+  $entity->lti_tool_provider_outcomes_resource_entity_id_fk = $records[$selected_index] -> lti_tool_provider_outcomes_resource_id;
+  $entity->lti_tool_provider_outcomes_result_sourcedid = $form_state['values']['lti_tool_provider_outcomes_result_sourcedid'];
+  $entity->lti_tool_provider_outcomes_user_id = $form_state['values']['lti_tool_provider_outcomes_user_id'];
+  $entity->lti_tool_provider_outcomes_score = $form_state['values']['lti_tool_provider_outcomes_score'];
+  field_attach_submit('lti_tool_provider_outcomes' , $entity , $form , $form_state);
+  $entity = lti_tool_provider_outcomes_save($entity);
+  drupal_set_message(t('Configurations saved'));
+  $form_state['redirect'] = 'ltitp-outcomes/manage';
+}
+
+/**
+ * Delete handler for the outcomes form.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_outcomes_edit_delete( $form , &$form_state ) {
+  $entity = $form_state['values']['lti_tool_provider_outcomes'];
+  lti_tool_provider_outcomes_delete($entity);
+  drupal_set_message(t('The entity %lti_tool_provider_outcomes (ID %lti_tool_provider_outcomes_id) has been deleted' ,
+    array('%lti_tool_provider_outcomes' => $entity->lti_tool_provider_outcomes_id , '%lti_tool_provider_outcomes_id' => $entity->lti_tool_provider_outcomes_id))
+  );
+  $form_state['redirect'] = 'ltitp-outcomes/manage';
+}
+
+/**
+ * Implements hook_rules_action_info().
+ */
+function lti_tool_provider_outcomes_rules_action_info() {
+  $actions['outcomes_set_score'] =  array(
+    'label' => t('Set user score'),
+    'named parameter' => TRUE,
+    'base' => 'lti_tool_provider_outcomes_set_score_action',
+    'group' => t('Outcomes'),
+    'parameter' => array(
+      'score' => array(
+        'type' => 'decimal',
+        'label' => t('Score'),
+        'description' => t('The score of the current user'),
+      ),
+    ),
+  );
+  return $actions;
+}
+
+/**
+ * Action: Set the user's score.
+ *
+ * @param array $params
+ *   Array of parameters
+ */
+function lti_tool_provider_outcomes_set_score_action($params) {
+  lti_tool_provider_outcomes_set_score($params['score']);
+}
+
+/**
+ * Removes all Outcomes record via the user id.
+ *
+ * This function is invoked when the hook_user_delete is called.
+ * This is to remove all user related Outcomes content.
+ *
+ * @param int $uid
+ *   User entity uid
+ */
+function lti_tool_provider_outcomes_remove_all_outcomes_by_user($uid) {
+  $results_arr = array();
+  $query =new EntityFieldQuery();
+  $query
+  ->entityCondition('entity_type',  'lti_tool_provider_outcomes')
+  ->propertyCondition('lti_tool_provider_outcomes_user_id',  $uid);
+  $result = $query->execute();
+  $entity_type = 'lti_tool_provider_outcomes';
+  if (!empty($result[$entity_type])) {
+    $outcomes = entity_load($entity_type,  array_keys($result[$entity_type]));
+    entity_get_controller($entity_type)->delete_multiple($outcomes);
+    drupal_set_message(check_plain(t('Outcomes record related to user:[' . $uid . '] has been removed')));
+  }
+}
+
+function lti_tool_provider_outcomes_outcomes_manage_form($form, &$form_state, $resource = null) {
+  $consumer = lti_tool_provider_get_consumer_by_key($_SESSION['lti_tool_provider_context_info']['oauth_consumer_key']);
+  if (!isset($resource)) {
+    $resource = lti_tool_provider_outcomes_get_resource($consumer -> lti_tool_provider_consumer_id, $_SESSION['lti_tool_provider_context_info']['context_id'], $_SESSION['lti_tool_provider_context_info']['resource_link_id']);
+  }
+  $outcomes = lti_tool_provider_outcomes_retrieves_outcomes_by_resource($resource -> lti_tool_provider_outcomes_resource_id);
+  $form = array();
+  $form['title'] = array(
+    '#type' => 'item',
+    '#markup' => t('Consumer : <b>' . $consumer-> lti_tool_provider_consumer_consumer . '</b>'),
+  );
+  $form['resource_title'] = array(
+    '#type' => 'item',
+    '#markup' => t('Outcomes record for resource : <b>' . $_SESSION['lti_tool_provider_context_info']['resource_link_title'] . '</b>'),
+  );
+  $form['outcomes'] = array(
+    '#type' => 'value',
+    '#value' => $outcomes,
+  );
+  $form['resource'] = array(
+    '#type' => 'value',
+    '#value' => $resource,
+  );
+  if (empty($outcomes)) {
+    $form['message'] = array(
+      '#type' => 'item',
+      '#markup' => t('No outcome records is avaliable'),
+    );
+  }
+  else {
+    $form['table'] = array(
+      '#tree' => TRUE,
+      '#theme' => 'table',
+      '#rows' => array(),
+      '#header' => array(
+        t('No'),
+        t('Username'),
+        t('Current Score'),
+        t('Date Joined'),
+        t('Last sent'),
+        t('Score Last updated'),
+      ),
+    );
+    $rows = 1;
+    $table_row_counter = 0;
+    $rows_arr = array();
+    foreach($outcomes as $outcome) {
+      $no =  array(
+        '#type' => 'item',
+        '#markup' => $rows,
+      );
+      $username =  array(
+        '#type' => 'item',
+        '#markup' => l(lti_tool_provider_outcomes_get_username($outcome->lti_tool_provider_outcomes_user_id), 'user/' . $outcome->lti_tool_provider_outcomes_user_id) ,
+      );
+      $score =  array(
+        '#prefix' => '<div class="container-inline">',
+        '#type' => 'textfield',
+        '#default_value' => $outcome -> lti_tool_provider_outcomes_score,
+        '#size' => 2,
+        '#maxlength'=>3,
+        '#required' => TRUE,);
+      $score_1 =  array(
+        '#prefix' => '/',
+        '#type' => 'textfield',
+        '#default_value' => $outcome -> lti_tool_provider_outcomes_score,
+        '#size' => 2,
+        '#maxlength'=>3,
+        '#required' => TRUE,
+        '#suffix' => '</div>',);
+      $date_joined =  array(
+        '#type' => 'item',
+        '#markup' => format_date($outcome -> lti_tool_provider_outcomes_date_joined),
+      );
+      $last_sent =  array(
+        '#type' => 'item',
+        '#markup' => isset($outcome -> lti_tool_provider_outcomes_timestamp) ? format_date($outcome -> lti_tool_provider_outcomes_timestamp) : 'Score yet to be sent',
+      );
+      $last_updated =  array(
+        '#type' => 'item',
+        '#markup' => isset($outcome -> lti_tool_provider_outcomes_last_updated) ? format_date($outcome -> lti_tool_provider_outcomes_last_updated) : 'Yet to be updated',
+      );
+      $form['table'][] = array(
+        'no' => &$no,
+        'username' => &$username,
+        'score' => array(&$score , &$score_1),
+        'date_joined' => &$date_joined,
+        'last_sent' => &$last_sent,
+        'last_updated' => &$last_updated,
+      );
+      $form['table']['#rows'][] = array(
+        array('data' => &$no ,  'width' => '5%'),
+        array('data' => &$username ,  'width' => '15%'),
+        array('data' => array(&$score, &$score_1) , 'width' => '50%'),
+        array('data' => &$date_joined ,  'width' => '10%'),
+        array('data' => &$last_sent ,  'width' => '10%'),
+        array('data' => &$last_updated ,  'width' => '10%'),
+      );
+      unset($no);
+      unset($username);
+      unset($score);
+      unset($score_1);
+      unset($date_joined);
+      unset($last_sent);
+      unset($last_updated);
+//       lti_tool_provider_outcomes_create_score_form_params($form,$resource-> lti_tool_provider_outcomes_resource_score_datatype, $outcome , $rows);
+      
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_entity'] = array(
+//         '#type' => 'value',
+//         '#value' => $outcome,
+//       );
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_no'] = array(
+//         '#type' => 'item',
+//         '#markup' => $rows,
+//       );
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_username'] = array(
+//         '#type' => 'item',
+//         '#markup' => l(lti_tool_provider_outcomes_get_username($outcome->lti_tool_provider_outcomes_user_id), 'user/' . $outcome->lti_tool_provider_outcomes_user_id) ,
+//       );
+//       //$outcome -> lti_tool_provider_outcomes_score
+//       // $form['row_' . $rows][ $outcome -> lti_tool_provider_outcomes_id . '_score'] =
+//       lti_tool_provider_outcomes_create_score_form_params($form,$resource-> lti_tool_provider_outcomes_resource_score_datatype, $outcome , $rows);
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_date_joined'] = array(
+//         '#type' => 'item',
+//         '#markup' => format_date($outcome -> lti_tool_provider_outcomes_date_joined),
+//       );
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_last_sent'] = array(
+//         '#type' => 'item',
+//         '#markup' => isset($outcome -> lti_tool_provider_outcomes_timestamp) ? format_date($outcome -> lti_tool_provider_outcomes_timestamp) : 'Score yet to be sent',
+//       );
+//       $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_last_updated'] = array(
+//         '#type' => 'item',
+//         '#markup' => isset($outcome -> lti_tool_provider_outcomes_last_updated) ? format_date($outcome -> lti_tool_provider_outcomes_last_updated) : 'Yet to be updated',
+//       );      
+//       $param = lti_tool_provider_outcomes_render_score_form_params($form , $counter , $outcome);
+//       $rows_arr[] = array(
+//         array('data' => $rows),
+//         array('data' => $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_username']),
+//         array('data' => $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_score'] ),
+//         array('data' => $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_date_joined']),
+//         array('data' => $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_last_sent']) ,
+//         array('data' => $form['row_' . $rows][$outcome -> lti_tool_provider_outcomes_id . '_last_updated']),
+//       );
+
+      $rows ++;
+    }
+    
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+      '#submit' => array('lti_tool_provider_outcomes_outcomes_manage_form_submit'),
+    );
+    $form['back'] = array(
+      '#type' => 'button',
+      '#value' => t('Cancel'),
+      '#executes_submit_callback' => TRUE,
+      '#submit' => array('lti_tool_provider_outcomes_outcomes_manage_form_cancel'),
+    );
+  }
+  dpm($form ,'ORIGINAL');
+//   $form['#theme'] = array('lti_tool_provider_outcomes_outcomes_manage_form');
+  return $form;
+}
+
+/**
+ * Theme for Grades Mapping Form.
+ *
+ * @param array $variables
+ *   Theme variables
+ *
+ * @return array
+ *   Themed Form
+ */
+function theme_lti_tool_provider_outcomes_outcomes_manage_form($variables) {
+  $form = $variables['form'];
+  $output = '';
+  $output .= drupal_render($form['title']);
+  $output .= drupal_render($form['resource_title']);
+  $outcomes = $form['outcomes']['#value'];
+  if (empty($outcomes)) {
+    $output .= drupal_render($form['message']);
+  }
+  else {
+    $counter = 1;
+    $rows = array();
+    foreach ($outcomes as $outcome) {
+      $param = lti_tool_provider_outcomes_render_score_form_params($form , $counter , $outcome);
+      $rows[] = array(
+        array('data' => $counter),
+        array('data' => drupal_render($form['row_' . $counter][$outcome -> lti_tool_provider_outcomes_id . '_username'])),
+        array('data' => $param),
+        array('data' => drupal_render($form['row_' . $counter][$outcome -> lti_tool_provider_outcomes_id . '_date_joined']) , array("style" => "word-wrap:break-word",)),
+        array('data' => drupal_render($form['row_' . $counter][$outcome -> lti_tool_provider_outcomes_id . '_last_sent']) , "style" => "word-wrap:break-word"),
+        array('data' => drupal_render($form['row_' . $counter][$outcome -> lti_tool_provider_outcomes_id . '_last_updated']) , "style" => "word-wrap:break-word"),
+      );
+      $counter ++;
+    }
+    $header = array(
+      t('No'),
+      t('Username'),
+      t('Current Score'),
+      t('Date Joined'),
+      t('Last sent'),
+      t('Score Last updated'),
+    );
+    $output .= theme('table', array('header' => $header, 'rows' => $rows));
+  }
+  $output .= drupal_render_children($form);
+  return $output;
+}
+
+/**
+ * Submit handler for the outcomes form.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_outcomes_outcomes_manage_form_validate(&$form , &$form_state) {
+  dpm($form,'form VALIDATION');
+  dpm($form_state,'form_state VALIDATION');
+//   $resource = $form_state['values']['resource'];
+//   $outcomes = $form_state['values']['outcomes'];
+//   $counter = 1;
+//   foreach($outcomes as $outcome){
+//     $score = lti_tool_provider_outcomes_format_score($form_state , $outcome , $resource -> lti_tool_provider_outcomes_resource_score_datatype);
+//     if (!lti_tool_provider_outcomes_validate_score($resource -> lti_tool_provider_outcomes_resource_score_datatype, $score)) {
+//       form_set_error('' , check_plain(t('Row Number : ' . $counter . ' has an error. The score must be of appropriate format of DATATYPE:' . $resource -> lti_tool_provider_outcomes_resource_score_datatype)));
+//     }
+//     else {
+//       //'row_' . $counter
+//       $form['values'][$outcome -> lti_tool_provider_outcomes_id . 'formatted_score'] = array(
+//         '#type' => 'value',
+//         '#value' => $score,
+//       );
+//       $form_state['values'][$outcome -> lti_tool_provider_outcomes_id . '_formatted_score'] = $score;
+//     }
+//     $counter ++;
+//   }
+}
+
+/**
+ * Submit handler for the outcomes form.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_outcomes_outcomes_manage_form_submit($form , &$form_state) {
+  dpm($form,'form SUBMISSION');
+  dpm($form_state,'form_state SUBMISSION');
+//   $outcomes = $form_state['values']['outcomes'];
+//   foreach ($outcomes as $outcome) {
+//     $outcome -> lti_tool_provider_outcomes_score = $form_state['values'][$outcome -> lti_tool_provider_outcomes_id . '_formatted_score'];
+//     $outcome -> lti_tool_provider_outcomes_last_updated = REQUEST_TIME;
+//     lti_tool_provider_outcomes_save($outcome);
+//   }
+//   drupal_set_message(t('Configurations saved'));
+//   $form_state['redirect'] = current_path();
+}
+function lti_tool_provider_outcomes_outcomes_manage_form_cancel($form , &$form_state){
+  drupal_goto('lti-tool-provider-outcomes/resource');
+}
