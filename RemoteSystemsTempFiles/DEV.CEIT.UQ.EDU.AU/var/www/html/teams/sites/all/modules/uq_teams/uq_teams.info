@@ -1,6 +1,0 @@
-name = UQ Teams
-description = Generates project teams from list of student users.
-core = 7.x
-version = 7.x-1.0-alpha5
-project = uq_teams
-project status url = "http://code.ceit.uq.edu.au/features/fserver"
