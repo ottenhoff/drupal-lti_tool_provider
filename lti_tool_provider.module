@@ -508,7 +508,7 @@ function lti_tool_provider_create_all_dummy_accounts() {
   if (!empty($entities)) {
     foreach ($entities as $entity) {
       $dummyname = 'lti_user@' . $entity->lti_tool_provider_consumer_domain;
-      $mail = $dummyname . 'example.com';
+      $mail = $dummyname . 'invalid';
       // Check if the dummy account exist.
       $query = new EntityFieldQuery();
       $query
@@ -584,7 +584,7 @@ function lti_tool_provider_create_dummy_account($domain) {
     return $account->uid;
   }
   else {
-    $mail = ($domain == '') ? $dummy_name . '@example.com' : $dummy_name . '@' . $domain . '.example.com';
+    $mail = ($domain == '') ? $dummy_name . '@invalid' : $dummy_name . '@' . $domain . '.invalid';
     // Create user with the authenticated roles.
     $userinfo = array(
       'name' => $dummy_name,
@@ -719,10 +719,10 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   // If no mail address given, Form a dummy mail address.
   if (!isset($launch_info['lis_person_contact_email_primary'])) {
     if ($launch_info['consumer_domain'] == '') {
-      $mail = $lti_user . '@example.com';
+      $mail = $lti_user . '@invalid';
     }
     else {
-      $mail = $lti_user . '.example.com';
+      $mail = $lti_user . '.invalid';
     }
   }
   else {
