@@ -26,7 +26,7 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
     '#title' => t('LTI Context to User Attribute Mapping'),
     '#description' => 'Choose the user attributes to be mapped from each LTI context variable.',
   );
-  $fields_array = lti_tool_provider_retrieve_user_field_types('TEXT');
+  $fields_array = _lti_tool_provider_retrieve_user_field_types('TEXT');
   $lis_list = lti_tool_provider_user_mapping_lis_details();
   $saved_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
   $form['mapping'] = array(
@@ -76,7 +76,7 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
 function lti_tool_provider_user_attributes_validate($form, &$form_state) {
   $check = TRUE;
   $lis_list = lti_tool_provider_user_mapping_lis_details();
-  $field_options = lti_tool_provider_retrieve_user_field_types('TEXT');
+  $field_options = _lti_tool_provider_retrieve_user_field_types('TEXT');
   $counters = array();
   foreach ($field_options as $field => $desc) {
     $counters[$field] = 0;

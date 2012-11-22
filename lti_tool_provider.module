@@ -297,9 +297,9 @@ function lti_tool_provider_context_mapping_details() {
  *   The string which represent the type of field to retrieve.
  *
  * @return array
- *   An array containing all the retrieved fields.
+ *   An array containing all the retrieved fields. The label is not display safe.
  */
-function lti_tool_provider_retrieve_user_field_types($filter = 'TEXT') {
+function _lti_tool_provider_retrieve_user_field_types($filter = 'TEXT') {
   $entites = field_info_instances('user');
   $result = array('none' => 'None');
   foreach ($entites['user'] as $field) {
@@ -766,7 +766,7 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   }
   // Construct the userinfo to be used to create the account.
   $user_attribute_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
-  $fields = lti_tool_provider_retrieve_user_field_types('TEXT');
+  $fields = _lti_tool_provider_retrieve_user_field_types('TEXT');
   $userinfo = array(
     'name' => $lti_user,
     'pass' => user_password(20),
