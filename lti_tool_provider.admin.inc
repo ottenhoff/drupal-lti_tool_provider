@@ -91,7 +91,7 @@ function lti_tool_provider_user_attributes_validate($form, &$form_state) {
     }
   }
   if (!$check) {
-    form_set_error('', t('You may not map multiple values to the same attribute.'));
+    form_set_error('mapping', t('You may not map multiple values to the same attribute.'));
   }
 }
 
@@ -394,19 +394,16 @@ function lti_tool_provider_consumer_form_validate($form, &$form_state) {
     $submitted = (object) $form_state['values']['lti_tool_provider_consumer'];
     field_attach_form_validate('lti_tool_provider_consumer', $submitted, $form, $form_state);
   }
-  elseif (!$check_key && !$check_domain) {
-    form_set_error('', t('Keys and domains must be unique.'));
+  if (!$check_domain) {
+    form_set_error('lti_tool_provider_consumer_domain', t('Domains must be unique.'));
   }
-  elseif (!$check_key) {
-    form_set_error('', t('Keys must be unique.'));
-  }
-  elseif (!$check_domain) {
-    form_set_error('', t('Domains must be unique.'));
+  if (!$check_key) {
+    form_set_error('lti_tool_provider_consumer_key', t('Keys must be unique.'));
   }
   $pattern = '/([A-Z0-9 _!@#$%=+*.?<>\/\r\n])/';
   $domain_char_check = preg_match($pattern, $form_state['values']['lti_tool_provider_consumer_domain']);
   if ($domain_char_check) {
-    form_set_error('', t('The domain must not contain numeric value, special characters, spaces and upper cases'));
+    form_set_error('lti_tool_provider_consumer_domain', t('The domain must not contain numeric value, special characters, spaces and upper cases'));
   }
 }
 
