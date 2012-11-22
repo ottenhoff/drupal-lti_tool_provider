@@ -496,23 +496,6 @@ function lti_tool_provider_consumer_view($entity, $view_mode = 'tweaky') {
     '#title' => t('Domain'),
     '#markup' => $entity->lti_tool_provider_consumer_domain,
   );
-  $entity_type = 'lti_tool_provider_consumer';
-  $extra_cols = lti_tool_provider_get_extra_columns($entity_type);
-  if (isset($extra_cols)) {
-    foreach ($extra_cols as $col) {
-      if (!isset($entity->$col)) {
-        $value = 'Not avaliable';
-      }
-      else {
-        $value = $entity->$col;
-      }
-      $entity->content[$col] = array(
-        '#type' => 'item',
-        '#title' => t(lti_tool_provider_get_column_desc($entity_type, $col)),
-        '#markup' => $value,
-      );
-    }
-  }
   $entity->content['lti_tool_provider_consumer_dummy_pref'] = array(
     '#type' => 'item',
     '#title' => t('Activate Dummy Account'),

@@ -638,27 +638,6 @@ function lti_tool_provider_get_extra_columns() {
 }
 
 /**
- * Get the column descriptions.
- *
- * @param string $entity_type
- *   The type of entity.
- * @param string $col
- *   The field name for which to get a description.
- *
- * @return string
- *   The description.
- */
-function lti_tool_provider_get_column_desc($entity_type, $col) {
-  $schema = drupal_get_schema($entity_type);
-  $fields = $schema['fields'];
-  foreach ($fields as $field => $value) {
-    if ($col == $field) {
-      return $fields[$field]['description'];
-    }
-  }
-}
-
-/**
  * Implements hook_entity_info().
  */
 function lti_tool_provider_entity_info() {
