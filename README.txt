@@ -7,9 +7,10 @@ Installation
 Download and place the module in your sites/all/modules or other suitable
 directory. 
 Download the module dependencies,
-  http://drupal.org/project/entity and
-  http://drupal.org/project/libraries
-  lti_tool_provider_og submodule also requires http://drupal.org/project/og
+        http://drupal.org/project/libraries
+  lti_tool_provider_og submodule also requires
+        http://drupal.org/project/og
+    and http://drupal.org/project/entity
 Download the OAuth.php library file https://github.com/juampy72/OAuth-PHP 
 and place it in sites/all/libraries/oauth/
 Enable the LTI Tool Provider module and optionally the LTI Tool Provider OG,
@@ -20,9 +21,10 @@ Administrative settings admin/lti_tool_provider
 Configure Tool Consumers
 Multiple Tool Consumers (LMS) are supported. Each should have a unique Key and
 Secret which must match in the configuration of both the consumer and provider.
-An account domain setting is available which will cause all accounts provisioned
-from the corresponding consumer to have @domain appended to the account name.
-Thus preventing account name conflicts between different tool consumers.
+An account domain setting is available which will cause all accounts
+provisioned from the corresponding consumer to have @domain appended to the
+account name. Thus preventing account name conflicts between different tool
+consumers.
 
 Configure User Mapping
 Accounts
@@ -40,8 +42,8 @@ If provided, the user_image is mapped to the account profile picture.
 
 Drupal Role Mapping
 The roles provided from the LMS can be mapped to any Drupal global roles.
-Note: If you map Administrator to Administrator, the admin of the LMS becomes an
-admin of your Drupal site.
+Note: If you map Administrator to Administrator, the admin of the LMS becomes
+an admin of your Drupal site.
 
 Course to Group Mapping
 If you have the Drupal Organic Groups installed (7.x-2.x only, 7.x-1.x not
@@ -112,6 +114,9 @@ John Zornig <j.zornig@uq.edu.au>
 Mabel Koh <mabel_xqw@hotmail.com>
 Tan Kee Hock <tkh3600@hotmail.com>
 
-Initial reviewers
+Initial reviewers and testers
 scottrigby <scottrigby@145945.no-reply.drupal.org>
 mradcliffe <mradcliffe@157079.no-reply.drupal.org>
+taslett <taslett@33096.no-reply.drupal.org>
+btopro <btopro@24286.no-reply.drupal.org>
+ELC <elc@784944.no-reply.drupal.org>

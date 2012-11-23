@@ -4,7 +4,6 @@ package = "Learning Tools Interoperability"
 core = 7.x
 files[] = LTIToolProviderOAuthDataStore.class.php
 files[] = LTIToolProviderConsumerEntityController.class.php
-dependencies[] = entity
 dependencies[] = field
 dependencies[] = libraries
 configure = admin/config/lti-tool-provider
