@@ -179,26 +179,19 @@ function lti_tool_provider_info() {
     '#type' => 'item',
     '#markup' => t('LTI Context Session Variables'),
   );
-  if (isset($_SESSION['lti_tool_provider_context_info'])) {
-    $info = $_SESSION['lti_tool_provider_context_info'];
-    $rows = array();
-    $loop_counter = 0;
-    foreach ($info as $key => $value) {
-      $rows[$loop_counter]['data']['key'] = $key;
-      $rows[$loop_counter]['data']['value'] = $value;
-      $loop_counter++;
-    }
-    $content['table'] = array(
-      '#theme' => 'table',
-      '#rows' => $rows,
-      '#header' => array(t('Key'), t('Value')),
-    );
+  $info = $_SESSION['lti_tool_provider_context_info'];
+  $rows = array();
+  $loop_counter = 0;
+  foreach ($info as $key => $value) {
+    $rows[$loop_counter]['data']['key'] = $key;
+    $rows[$loop_counter]['data']['value'] = $value;
+    $loop_counter++;
   }
-  else {
-    $content['table'] = array(
-      '#type' => 'item',
-      '#markup' => t('There is no LTI Context'),
-    );
-  }
+  $content['table'] = array(
+    '#theme' => 'table',
+    '#rows' => $rows,
+    '#header' => array(t('Key'), t('Value')),
+    '#empty' => t('There are no LTI Context variables.'),
+  );
   return $content;
 }

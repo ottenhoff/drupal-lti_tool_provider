@@ -60,7 +60,6 @@ function lti_tool_provider_user_attributes($form, &$form_state) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save User Attributes'),
-    '#submit' => array('lti_tool_provider_user_attributes_submit'),
   );
   return $form;
 }
