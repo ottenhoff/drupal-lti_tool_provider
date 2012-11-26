@@ -186,4 +186,3 @@ function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, $acc
     }
   }
 }
-

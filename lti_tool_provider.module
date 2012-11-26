@@ -44,10 +44,10 @@ function lti_tool_provider_help($path, $arg) {
       $path = drupal_get_path('module', 'lti_tool_provider');
       $output  = '<p>' . t("Read the @url file in the LTI Tool Provider module directory.", array(
         '@url' => l(t('README.txt'), url($path . '/README.txt')),
-        )) . '</p>';
+      )) . '</p>';
       $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's @docs.", array(
         '@docs' => l(t('project page'), 'http://drupal.org/sandbox/jzornig/1809350'),
-        )) . '</p>';
+      )) . '</p>';
       return $output;
   }
 }
@@ -349,23 +349,24 @@ function lti_tool_provider_consumer_delete($entity) {
 }
 
 /**
- * Retrieves the consumer entity via its consumer key
+ * Retrieves the consumer entity via its consumer key.
  *
  * @param string $key
- *   Consumer key
+ *   Consumer key.
+ *
  * @return object $consumer
- *   Consumer entity, null if record is unable to be retrieved
+ *   Consumer entity, null if record is unable to be retrieved.
  */
 function lti_tool_provider_get_consumer_by_key($key) {
   $results_arr = array();
-  $query =new EntityFieldQuery();
+  $query = new EntityFieldQuery();
   $query
-  ->entityCondition('entity_type',  'lti_tool_provider_consumer')
-  ->propertyCondition('lti_tool_provider_consumer_key',  $key);
+  ->entityCondition('entity_type', 'lti_tool_provider_consumer')
+  ->propertyCondition('lti_tool_provider_consumer_key', $key);
   $result = $query->execute();
   $entity_type = 'lti_tool_provider_consumer';
   if (!empty($result[$entity_type])) {
-    $outcomes = entity_load($entity_type,  array_keys($result[$entity_type]));
+    $outcomes = entity_load($entity_type, array_keys($result[$entity_type]));
     $consumer = NULL;
     foreach ($outcomes as $outcome) {
       $consumer = $outcome;
@@ -562,8 +563,8 @@ function lti_tool_provider_remove_dummy_account($domain = '') {
   $dummy_acc_arr = array();
   $query = new EntityFieldQuery();
   $query
-    ->entityCondition('entity_type', 'user')
-    ->propertyCondition('name', $dummy_name, '=');
+  ->entityCondition('entity_type', 'user')
+  ->propertyCondition('name', $dummy_name, '=');
   $result = $query->execute();
   if (isset($result['user'])) {
     user_delete_multiple(array_keys($result['user']));
@@ -717,7 +718,7 @@ function lti_tool_provider_goto($path) {
  *
  * @param string $lti_user
  *   The lti user name.
- * @param array $info
+ * @param array $launch_info
  *   The lti context info.
  *
  * @return object
@@ -737,7 +738,8 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   else {
     $mail = $launch_info['lis_person_contact_email_primary'];
   }
-  // If a user image is supplied create a managed file and attach it to the user account.
+  // If a user image is supplied create a managed file,
+  // and attach it to the user account.
   if (isset($context_info['user_image'])) {
     $file = (object) array(
       'uid' => 1,
@@ -777,4 +779,3 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   }
   return $account;
 }
-
