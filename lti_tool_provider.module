@@ -660,7 +660,11 @@ function lti_tool_provider_entity_info() {
       'label callback' => 'lti_tool_provider_consumer_label',
       'uri callback' => 'lti_tool_provider_consumer_uri',
       'module' => 'lti_tool_provider_consumer',
-      'access callback' => 'administer lti_tool_provider_consumer entities',
+      'bundles' => array(
+        'lti_tool_provider_consumer' => array(
+          'path' => 'admin/config/lti_tool_provider/lti_tool_provider_consumers',
+          'access arguments' => array('administer lti_tool_provider_consumer entities'),
+        )),
     ),
   );
   return $return;

@@ -89,7 +89,8 @@ The following custom parameters are processed by LTI Tool Provider.
 custom_destination defines a landing page path, if provided it will override the
 default (home page or group node) landing page. 
 
-custom_destination_label defines a label to override the default Home menu label.
+custom_destination_label defines a label to override the default Home menu
+label.
 
 custom_course_title defines an alternate course/group title, if provided, it
 will be used as the group title when provisioning groups.
