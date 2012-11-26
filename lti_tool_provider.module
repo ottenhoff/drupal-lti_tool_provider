@@ -354,7 +354,7 @@ function lti_tool_provider_consumer_delete($entity) {
  * @param string $key
  *   Consumer key.
  *
- * @return object $consumer
+ * @return object
  *   Consumer entity, null if record is unable to be retrieved.
  */
 function lti_tool_provider_get_consumer_by_key($key) {
