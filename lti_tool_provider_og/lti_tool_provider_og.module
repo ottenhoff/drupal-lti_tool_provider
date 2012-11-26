@@ -111,12 +111,10 @@ function lti_tool_provider_og_retrieve_entity_field_types($group_bundle) {
  *
  * @param array $launch_info
  *   The launch info array, modified to add group entity:bundle and id.
- * @param string $destination
- *   The destination path, modified to be the group page.
  * @param object $account
  *   The drupal user account of the LTI user.
  */
-function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, &$destination, $account) {
+function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, $account) {
   $selected_group_bundle = variable_get('lti_tool_provider_og_group_mapping_bundle');
   if ($selected_group_bundle != 'none:None') {
     // Grant Group Membership and Group Role.
@@ -181,7 +179,7 @@ function lti_tool_provider_og_lti_tool_provider_launch_alter(&$launch_info, &$de
       $launch_info['course_entity_eid'] = $group_nid;
     }
     if (isset($launch_info['course_entity_eid'])) {
-      $destination = $launch_info['course_entity_type'] . '/' . $launch_info['course_entity_eid'];
+      $launch_info['destination'] = $launch_info['course_entity_type'] . '/' . $launch_info['course_entity_eid'];
     }
     else {
       drupal_set_message(check_plain('No course corresponding to ' . $launch_info['context_label'] . ' exists.'));

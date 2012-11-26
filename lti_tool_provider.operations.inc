@@ -32,7 +32,7 @@ function lti_tool_provider_launch() {
   if (empty($_REQUEST['oauth_consumer_key'])) {
     unset($_SESSION['lti_tool_provider_context_info']);
     drupal_set_message(t('Not a valid LTI context.'), 'info');
-    return 'Error: Invalid context. Missing oauth_consumer_key in request';
+    return 'Error: Invalid context. Missing oauth_consumer_key in request.';
   }
   // Begin a new session based on this LTI launch request.
   drupal_session_start();
@@ -47,13 +47,16 @@ function lti_tool_provider_launch() {
     $server->verify_request($request);
     // This is a LTI launch request.
   } catch (Exception $e) {
-    drupal_set_message($e->getMessage(), 'error');
-    return 'Error: Invalid context, OAuth failure.';
+    drupal_set_message(check_plain($e->getMessage()), 'error');
+    return t('Error: Invalid context, OAuth failure.');
   }
   // Collect the launch information for later storage in the session.
   $launch_info = $request->get_parameters();
+  if (empty($launch_info['context_id'])) {
+    return t('Error: Invalid context, No context Id.');
+  }
   $launch_info['consumer_domain'] = lti_tool_provider_retrieve_consumer_domain($oauth_consumer_key);
-  if (isset($launch_info['context_id']) && isset($launch_info['user_id'])) {
+  if (!empty($launch_info['user_id'])) {
     $lti_user = $launch_info['user_id'] . $launch_info['consumer_domain'];
   }
   else {
@@ -91,25 +94,25 @@ function lti_tool_provider_launch() {
   }
   // $account is the $lti_user.
   // Map Drupal global roles based on the user LTI role.
-  if (isset($launch_info['roles'])) {
+  if (!empty($launch_info['roles'])) {
     lti_tool_provider_assign_global_roles_to_user($launch_info['roles'], $account->uid);
     drupal_static_reset('user_access');
   }
-  $destination = '';
-  module_invoke_all('lti_tool_provider_launch', $launch_info, $account);
-  drupal_alter('lti_tool_provider_launch', $launch_info, $destination, $account);
-  // Go to the required destination.
-  if (key_exists('custom_destination', $launch_info)) {
-    $destination .= '/' . $launch_info['custom_destination'];
+  $launch_info['destination'] = '';
+  drupal_alter('lti_tool_provider_launch', $launch_info, $account);
+  // Calculate the final destination.
+  if (!empty($launch_info['custom_destination'])) {
+    $launch_info['destination'] .= '/' . $launch_info['custom_destination'];
   }
   // Save launch information in session.
   $_SESSION['lti_tool_provider_context_info'] = $launch_info;
   // Set language in session.
-  if (isset($launch_info['launch_presentation_locale'])) {
+  if (!empty($launch_info['launch_presentation_locale'])) {
     $_SESSION['language'] = drupal_strtolower($launch_info['launch_presentation_locale']);
   }
-  lti_tool_provider_goto($destination);
-  return 'Launched';
+  lti_tool_provider_goto($launch_info['destination']);
+  // Not reached.
+  return t('Launched');
 }
 
 /**
@@ -120,7 +123,7 @@ function lti_tool_provider_return_title($title) {
     if (key_exists('custom_return_label', $_SESSION['lti_tool_provider_context_info'])) {
       return $_SESSION['lti_tool_provider_context_info']['custom_return_label'];
     }
-    return 'Return to LMS';
+    return t('Return to LMS');
   }
 }
 
@@ -174,18 +177,7 @@ function lti_tool_provider_home_title($title) {
  * Menu page callback for the LTI Home menu item.
  */
 function lti_tool_provider_home() {
-  // If in a lti context return to group home page + custom destination.
-  // Otherwise just the site home.
-  $destination = '';
-  if (isset($_SESSION['lti_tool_provider_context_info'])) {
-    if (key_exists('course_entity_type', $_SESSION['lti_tool_provider_context_info'])) {
-      $destination = $_SESSION['lti_tool_provider_context_info']['course_entity_type'] . '/' . $_SESSION['lti_tool_provider_context_info']['course_entity_eid'];
-    }
-    if (key_exists('custom_destination', $_SESSION['lti_tool_provider_context_info'])) {
-      $destination .= '/' . $_SESSION['lti_tool_provider_context_info']['custom_destination'];
-    }
-  }
-  drupal_goto($destination);
+  lti_tool_provider_goto($_SESSION['lti_tool_provider_context_info']['destination']);
 }
 
 /**

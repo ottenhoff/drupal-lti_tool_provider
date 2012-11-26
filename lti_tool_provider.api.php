@@ -6,15 +6,16 @@
  */
 
 /**
- * Implements hook_lti_tool_provider_launch().
+ * Implements hook_lti_tool_provider_launch_alter().
  */
-function hook_lti_tool_provider_launch() {
+function hook_lti_tool_provider_launch_alter(&$launch_info, $account) {
   /*
-   *  Do stuff at the time of an LTI launch.
+   * Do stuff at the time of an LTI launch including
+   *   modifying context variables.
    * Invoked after user provisioned, authenticated and authorized,
-   *   and course group provisioned, but before redirect to landing page.
-   * LTI context variables are available in
-   * $_SESSION['lti_tool_provider_context_info'].
+   *   but before redirect to landing page.
+   * LTI context variables are available in $launch_info, and
+   * user account is $account.
    */
 }
 
