@@ -121,7 +121,7 @@ function lti_tool_provider_launch() {
 function lti_tool_provider_return_title($title) {
   if (isset($_SESSION['lti_tool_provider_context_info'])) {
     if (key_exists('custom_return_label', $_SESSION['lti_tool_provider_context_info'])) {
-      return $_SESSION['lti_tool_provider_context_info']['custom_return_label'];
+      return check_plain($_SESSION['lti_tool_provider_context_info']['custom_return_label']);
     }
     return t('Return to LMS');
   }
@@ -162,15 +162,15 @@ function lti_tool_provider_return() {
 function lti_tool_provider_home_title($title) {
   if (isset($_SESSION['lti_tool_provider_context_info'])) {
     if (key_exists('custom_destination_label', $_SESSION['lti_tool_provider_context_info'])) {
-      return $_SESSION['lti_tool_provider_context_info']['custom_destination_label'];
+      return check_plain($_SESSION['lti_tool_provider_context_info']['custom_destination_label']);
     }
     else {
       if (key_exists('resource_link_title', $_SESSION['lti_tool_provider_context_info'])) {
-        return $_SESSION['lti_tool_provider_context_info']['resource_link_title'];
+        return check_plain($_SESSION['lti_tool_provider_context_info']['resource_link_title']);
       }
     }
   }
-  return 'Home';
+  return t('Home');
 }
 
 /**
