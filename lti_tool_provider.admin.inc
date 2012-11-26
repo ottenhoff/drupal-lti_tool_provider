@@ -219,7 +219,7 @@ function lti_tool_provider_consumers_admin() {
   );
   $loop_counter = 0;
   foreach ($consumers as $key => $consumer) {
-    // Create tabular rows for our entities. 
+    // Create tabular rows for our entities.
     $id = $consumer->lti_tool_provider_consumer_id;
     // This statement can create url to view individual keys.
     $consumer_name = l($consumer->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id);

@@ -2,7 +2,8 @@
 
 /**
  * @file
- * Menu page callbacks for the lti operations launch, return as well as home and info.
+ * Menu page callbacks for the lti operations launch,
+ * return as well as home and info.
  */
 
 /**

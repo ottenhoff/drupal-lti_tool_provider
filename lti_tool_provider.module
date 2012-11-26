@@ -42,8 +42,12 @@ function lti_tool_provider_help($path, $arg) {
   switch ($path) {
     case 'admin/help#lti_tool_provider':
       $path = drupal_get_path('module', 'lti_tool_provider');
-      $output  = '<p>' . t("Read the <a href='@url'>README.txt</a> file in the LTI Tool Provider module directory.", array('@url' => "/$path/README.txt")) . '</p>';
-      $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's<a href='@docs'>project page</a>.", array('@docs' => 'http://drupal.org/sandbox/jzornig/1809350')) . '</p>';
+      $output  = '<p>' . t("Read the @url file in the LTI Tool Provider module directory.", array(
+        '@url' => l(t('README.txt'), url($path . '/README.txt')),
+        )) . '</p>';
+      $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's @docs.", array(
+        '@docs' => l(t('project page'), 'http://drupal.org/sandbox/jzornig/1809350'),
+        )) . '</p>';
       return $output;
   }
 }
@@ -297,7 +301,8 @@ function lti_tool_provider_context_mapping_details() {
  *   The string which represent the type of field to retrieve.
  *
  * @return array
- *   An array containing all the retrieved fields. The label is not display safe.
+ *   An array containing all the retrieved fields.
+ *   The label is not display safe.
  */
 function _lti_tool_provider_retrieve_user_field_types($filter = 'TEXT') {
   $entites = field_info_instances('user');
