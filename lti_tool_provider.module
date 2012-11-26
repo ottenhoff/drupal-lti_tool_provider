@@ -42,11 +42,11 @@ function lti_tool_provider_help($path, $arg) {
   switch ($path) {
     case 'admin/help#lti_tool_provider':
       $path = drupal_get_path('module', 'lti_tool_provider');
-      $output  = '<p>' . t("Read the @url file in the LTI Tool Provider module directory.", array(
-        '@url' => l(t('README.txt'), url($path . '/README.txt')),
+      $output  = '<p>' . t("Read the !url file in the LTI Tool Provider module directory.", array(
+        '!url' => l(t('README.txt'), url($path . '/README.txt')),
       )) . '</p>';
-      $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's @docs.", array(
-        '@docs' => l(t('project page'), 'http://drupal.org/sandbox/jzornig/1809350'),
+      $output .= '<p>' . t("Information about LTI Tool Provider can also be found on the module's !docs.", array(
+        '!docs' => l(t('project page'), 'http://drupal.org/sandbox/jzornig/1809350'),
       )) . '</p>';
       return $output;
   }
