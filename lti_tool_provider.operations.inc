@@ -129,28 +129,18 @@ function lti_tool_provider_return_title($title) {
 
 /**
  * Page callback for the lti return menu item.
- *
- * @return string
- *   The page content if any.
  */
 function lti_tool_provider_return() {
-  // Logout the user and redirect to the return url in the ltitp_context_info.
+  // Logout the user and redirect to the return url in the context_info.
   global $user;
-  // If in a lti context log user out and return to launch presentation.
-  // otherwise just logout.
-  if (isset($_SESSION['lti_tool_provider_context_info'])) {
-    module_invoke_all('lti_tool_provider_return');
-    $url = $_SESSION['lti_tool_provider_context_info']['launch_presentation_return_url'];
-    watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
-    module_invoke_all('user_logout', $user);
-    // Destroy the current session, and reset $user to the anonymous user.
-    session_destroy();
-    lti_tool_provider_goto($url);
-  }
-  else {
-    lti_tool_provider_goto('user/logout');
-  }
-  return '';
+  // Log user out and return to launch presentation.
+  module_invoke_all('lti_tool_provider_return');
+  $url = $_SESSION['lti_tool_provider_context_info']['launch_presentation_return_url'];
+  watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
+  module_invoke_all('user_logout', $user);
+  // Destroy the current session, and reset $user to the anonymous user.
+  session_destroy();
+  lti_tool_provider_goto($url);
 }
 
 /**
@@ -160,15 +150,11 @@ function lti_tool_provider_return() {
  *   The title.
  */
 function lti_tool_provider_home_title($title) {
-  if (isset($_SESSION['lti_tool_provider_context_info'])) {
-    if (key_exists('custom_destination_label', $_SESSION['lti_tool_provider_context_info'])) {
-      return check_plain($_SESSION['lti_tool_provider_context_info']['custom_destination_label']);
-    }
-    else {
-      if (key_exists('resource_link_title', $_SESSION['lti_tool_provider_context_info'])) {
-        return check_plain($_SESSION['lti_tool_provider_context_info']['resource_link_title']);
-      }
-    }
+  if (key_exists('custom_destination_label', $_SESSION['lti_tool_provider_context_info'])) {
+    return check_plain($_SESSION['lti_tool_provider_context_info']['custom_destination_label']);
+  }
+  if (key_exists('resource_link_title', $_SESSION['lti_tool_provider_context_info'])) {
+    return check_plain($_SESSION['lti_tool_provider_context_info']['resource_link_title']);
   }
   return t('Home');
 }
