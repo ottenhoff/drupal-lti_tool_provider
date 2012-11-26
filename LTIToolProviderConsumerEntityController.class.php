@@ -16,6 +16,7 @@ extends DrupalEntityControllerInterface {
    * Save.
    *
    * @param object $entity
+   *   The consumer.
    */
   public function save($entity);
 
@@ -23,6 +24,7 @@ extends DrupalEntityControllerInterface {
    * Delete.
    *
    * @param object $entity
+   *   The consumer.
    */
   public function delete($entity);
 }
@@ -35,6 +37,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    * Create a consumer.
    *
    * @return object
+   *   The consumer.
    */
   public function create() {
     $entity = new stdClass();
@@ -55,8 +58,10 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    * Save a consumer.
    *
    * @param object $entity
+   *   The consumer.
    *
    * @return object|boolean
+   *   The consumer or false if save failed.
    */
   public function save($entity) {
     $transaction = db_transaction();
@@ -95,6 +100,7 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    * Delete a consumer.
    *
    * @param object $entity
+   *   The consumer.
    */
   public function delete($entity) {
     $this->deleteMultiple(array($entity));
@@ -104,8 +110,10 @@ implements LTIToolProviderConsumerEntityControllerInterface {
    * Delete multiple consumers.
    *
    * @param array $entities
+   *   An array of consumers.
    *
    * @throws Exception
+   *   From the db api.
    */
   public function deleteMultiple($entities) {
     $ids = array();
