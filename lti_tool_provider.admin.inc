@@ -240,16 +240,16 @@ function lti_tool_provider_consumers_admin() {
       'edit' => array(
         '#type' => 'link',
         '#title' => t('edit'),
-        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer -> lti_tool_provider_consumer_id . '/edit',
+        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id . '/edit',
         '#options' => array('query' => $destination),
       ),
       'nbsp' => array('#markup' => '&nbsp;&nbsp;'),
       'delete' => array(
         '#type' => 'link',
         '#title' => t('delete'),
-        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer -> lti_tool_provider_consumer_id . '/delete',
+        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id . '/delete',
         '#options' => array('query' => $destination),
-      )
+      ),
     );
     $content['consumer_table'][] = array(
       'id' => &$id,
@@ -355,7 +355,6 @@ function lti_tool_provider_consumer_form($form, &$form_state, $consumer) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    //    '#submit' => array('lti_tool_provider_consumer_form_submit'),
     '#weight' => 100,
   );
   if ($consumer->lti_tool_provider_consumer_id != 0) {
@@ -570,12 +569,13 @@ function lti_tool_provider_consumer_view($entity, $view_mode = 'tweaky') {
 }
 
 /**
- * Confirms the delete action
+ * Confirms the delete action.
  *
  * @param array $form_state
- *   Form state array
+ *   Form state array.
+ *
  * @return array
- *   Confirm form array
+ *   Confirm form array.
  */
 function lti_tool_provider_consumer_confirm_delete_form($form, &$form_state, $consumer) {
   $form['consumer_delete'] = array(
