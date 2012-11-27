@@ -113,6 +113,14 @@ function lti_tool_provider_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'lti_tool_provider.admin.inc',
   );
+  $items['admin/config/lti-tool-provider/lti-tool-consumer/%lti_tool_provider_consumer/delete'] = array(
+    'title' => 'Delete',
+    'description' => 'Delete an LTI Tool Consumer.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lti_tool_provider_consumer_confirm_delete_form', 4),
+    'access arguments' => array('administer lti_tool_provider module'),
+    'file' => 'lti_tool_provider.admin.inc',
+  );
   $items['admin/config/lti-tool-provider/lti-tool-consumer/add'] = array(
     'title' => 'Add LTI Consumer',
     'description' => 'Add an LTI Tool Consumer.',
@@ -313,19 +321,6 @@ function _lti_tool_provider_retrieve_user_field_types($filter = 'TEXT') {
     }
   }
   return $result;
-}
-
-/**
- * Add a consumer.
- *
- * @return array
- *   A consumer add form.
- */
-function lti_tool_provider_consumer_add() {
-  // Create a basic entity structure to be used and passed to the
-  // validation and submission functions.
-  $entity = entity_get_controller('lti_tool_provider_consumer')->create();
-  return drupal_get_form('lti_tool_provider_consumer_form', $entity);
 }
 
 /**

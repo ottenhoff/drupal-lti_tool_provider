@@ -215,19 +215,42 @@ function lti_tool_provider_consumers_admin() {
       t('Domain'),
       t('Dummy Account'),
       t('Date Joined'),
+      t('Operations'),
     ),
   );
+  $destination = drupal_get_destination();
   $loop_counter = 0;
   foreach ($consumers as $key => $consumer) {
     // Create tabular rows for our entities.
     $id = $consumer->lti_tool_provider_consumer_id;
     // This statement can create url to view individual keys.
-    $consumer_name = l($consumer->lti_tool_provider_consumer_consumer, 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id);
+    $consumer_name = array(
+      '#type' => 'link',
+      '#title' => t('@consumer', array('@consumer' => $consumer->lti_tool_provider_consumer_consumer)),
+      '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id . '/view',
+      '#options' => array('query' => $destination),
+    );
     $key = $consumer->lti_tool_provider_consumer_key;
     $secret = $consumer->lti_tool_provider_consumer_secret;
     $domain = $consumer->lti_tool_provider_consumer_domain;
     $dummy_pref = lti_tool_provider_trans_bool($consumer->lti_tool_provider_consumer_dummy_pref);
     $date_joined = format_date($consumer->date_joined);
+    // Build a list of all the operations for the current consumer.
+    $operations = array(
+      'edit' => array(
+        '#type' => 'link',
+        '#title' => t('edit'),
+        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer -> lti_tool_provider_consumer_id . '/edit',
+        '#options' => array('query' => $destination),
+      ),
+      'nbsp' => array('#markup' => '&nbsp;&nbsp;'),
+      'delete' => array(
+        '#type' => 'link',
+        '#title' => t('delete'),
+        '#href' => 'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer -> lti_tool_provider_consumer_id . '/delete',
+        '#options' => array('query' => $destination),
+      )
+    );
     $content['consumer_table'][] = array(
       'id' => &$id,
       'Consumer' => &$consumer_name,
@@ -236,6 +259,7 @@ function lti_tool_provider_consumers_admin() {
       'Domain' => &$domain,
       'Dummy_Pref' => &$dummy_pref,
       'Date Joined' => &$date_joined,
+      'operations' => &$operations,
     );
     $content['consumer_table']['#rows'][] = array(
       array('data' => &$id),
@@ -245,6 +269,7 @@ function lti_tool_provider_consumers_admin() {
       array('data' => &$domain),
       array('data' => &$dummy_pref),
       array('data' => &$date_joined),
+      array('data' => &$operations),
     );
     unset($id);
     unset($consumer_name);
@@ -253,9 +278,23 @@ function lti_tool_provider_consumers_admin() {
     unset($domain);
     unset($dummy_pref);
     unset($date_joined);
+    unset($operations);
   }
   $content['consumer_table']['#empty'] = t('No LTITP Consumer entities currently exist.');
   return $content;
+}
+
+/**
+ * Add a consumer.
+ *
+ * @return array
+ *   A consumer add form.
+ */
+function lti_tool_provider_consumer_add() {
+  // Create a basic entity structure to be used and passed to the
+  // validation and submission functions.
+  $entity = entity_get_controller('lti_tool_provider_consumer')->create();
+  return drupal_get_form('lti_tool_provider_consumer_form', $entity);
 }
 
 /**
@@ -265,62 +304,65 @@ function lti_tool_provider_consumers_admin() {
  *   The form.
  * @param array $form_state
  *   The form state.
- * @param object $entity
+ * @param object $consumer
  *   The consumer entity to display.
  *
  * @return array
  *   The form array.
  */
-function lti_tool_provider_consumer_form($form, &$form_state, $entity) {
+function lti_tool_provider_consumer_form($form, &$form_state, $consumer) {
+  if (!isset($form_state['#consumer'])) {
+    $form_state['#consumer'] = $consumer;
+  }
   $form['lti_tool_provider_consumer_consumer'] = array(
     '#type' => 'textfield',
     '#title' => t('Consumer'),
     '#required' => TRUE,
-    '#default_value' => $entity->lti_tool_provider_consumer_consumer,
+    '#default_value' => $consumer->lti_tool_provider_consumer_consumer,
   );
   $form['lti_tool_provider_consumer_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Key'),
     '#required' => TRUE,
-    '#default_value' => $entity->lti_tool_provider_consumer_key,
+    '#default_value' => $consumer->lti_tool_provider_consumer_key,
   );
   $form['lti_tool_provider_consumer_secret'] = array(
     '#type' => 'textfield',
     '#title' => t('Secret'),
     '#required' => TRUE,
-    '#default_value' => $entity->lti_tool_provider_consumer_secret,
+    '#default_value' => $consumer->lti_tool_provider_consumer_secret,
   );
   $form['lti_tool_provider_consumer_domain'] = array(
     '#type' => 'textfield',
     '#title' => t('Domain'),
     '#required' => FALSE,
-    '#default_value' => $entity->lti_tool_provider_consumer_domain,
+    '#default_value' => $consumer->lti_tool_provider_consumer_domain,
   );
   $form['lti_tool_provider_consumer_dummy_pref'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use a dummy account for unidentified users'),
-    '#default_value' => $entity->lti_tool_provider_consumer_dummy_pref,
+    '#default_value' => $consumer->lti_tool_provider_consumer_dummy_pref,
   );
   $form['lti_tool_provider_consumer_id'] = array(
     '#type' => 'value',
-    '#value' => $entity->lti_tool_provider_consumer_id,
+    '#value' => $consumer->lti_tool_provider_consumer_id,
   );
   $form['lti_tool_provider_consumer'] = array(
     '#type' => 'value',
-    '#value' => $entity,
+    '#value' => $consumer,
   );
-  field_attach_form('lti_tool_provider_consumer', $entity, $form, $form_state);
+  field_attach_form('lti_tool_provider_consumer', $consumer, $form, $form_state);
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#submit' => array('lti_tool_provider_consumer_form_submit'),
+    //    '#submit' => array('lti_tool_provider_consumer_form_submit'),
     '#weight' => 100,
   );
-  if (current_path() != "lti-tool-consumer/add") {
+  if ($consumer->lti_tool_provider_consumer_id != 0) {
     $form['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
-      '#submit' => array('lti_tool_provider_consumer_edit_delete'),
+      '#submit' => array('lti_tool_provider_consumer_form_delete_submit'),
       '#weight' => 200,
     );
   }
@@ -438,6 +480,19 @@ function lti_tool_provider_consumer_form_submit($form, &$form_state) {
 }
 
 /**
+ * Button submit function: handle the 'Delete' button on the consumer form.
+ */
+function lti_tool_provider_consumer_form_delete_submit($form, &$form_state) {
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+  $consumer = $form_state['#consumer'];
+  $form_state['redirect'] = array('admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id . '/delete', array('query' => $destination));
+}
+
+/**
  * Edit or delete a consumer entity.
  *
  * @param array $form
@@ -450,8 +505,8 @@ function lti_tool_provider_consumer_edit_delete($form, &$form_state) {
   lti_tool_provider_remove_dummy_account($entity->lti_tool_provider_consumer_domain);
   lti_tool_provider_consumer_delete($entity);
   drupal_set_message(t('The entity %lti_tool_provider_consumer_consumer (ID %lti_tool_provider_consumer_id) has been deleted.', array(
-    '%lti_tool_provider_consumer_consumer' => $entity->lti_tool_provider_consumer_consumer,
-    '%lti_tool_provider_consumer_id' => $entity->lti_tool_provider_consumer_id,
+  '%lti_tool_provider_consumer_consumer' => $entity->lti_tool_provider_consumer_consumer,
+  '%lti_tool_provider_consumer_id' => $entity->lti_tool_provider_consumer_id,
   )));
   $form_state['redirect'] = 'admin/config/lti-tool-provider/lti-tool-consumers';
 }
@@ -510,6 +565,44 @@ function lti_tool_provider_consumer_view($entity, $view_mode = 'tweaky') {
   $entity->content['#language'] = $langcode;
   module_invoke_all('entity_view', $entity, $entity_type, $view_mode, $langcode);
   drupal_alter(array('lti_tool_provider_consumer_view', 'entity_view'),
-    $entity->content, $entity_type);
+  $entity->content, $entity_type);
   return $entity->content;
+}
+
+/**
+ * Confirms the delete action
+ *
+ * @param array $form_state
+ *   Form state array
+ * @return array
+ *   Confirm form array
+ */
+function lti_tool_provider_consumer_confirm_delete_form($form, &$form_state, $consumer) {
+  $form['consumer_delete'] = array(
+    '#type' => 'value',
+    '#value' => $consumer,
+  );
+  return confirm_form($form,
+    t('Are you sure you want to delete the consumer @name?', array('@name' => $consumer->lti_tool_provider_consumer_consumer)),
+    'admin/config/lti-tool-provider/lti-tool-consumer/' . $consumer->lti_tool_provider_consumer_id,
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel'));
+}
+
+/**
+ * Submit handler for the consumer form delete.
+ *
+ * @param array $form
+ *   Form array
+ * @param array $form_state
+ *   Form state array
+ */
+function lti_tool_provider_consumer_confirm_delete_form_submit($form, &$form_state) {
+  $consumer = $form['consumer_delete']['#value'];
+  lti_tool_provider_consumer_delete($consumer);
+  drupal_set_message(t('The consumer @name has been deleted.', array(
+  '@name' => $consumer->lti_tool_provider_consumer_consumer,
+  )));
+  $form_state['redirect'] = 'admin/config/lti-tool-provider/lti-tool-consumers';
 }
