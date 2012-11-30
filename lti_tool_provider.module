@@ -753,7 +753,7 @@ function lti_tool_provider_create_account($lti_user, $launch_info) {
   $user_attribute_settings = variable_get('lti_tool_provider_user_attribute_mapping', array());
   $fields = _lti_tool_provider_retrieve_user_field_types('TEXT');
   $userinfo = array(
-    'name' => $lti_user,
+    'name' => $mail,
     'pass' => user_password(20),
     'init' => $mail,
     'mail' => $mail,

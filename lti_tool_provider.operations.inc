@@ -57,7 +57,10 @@ function lti_tool_provider_launch() {
     return t('Error: Invalid context, No context Id.');
   }
   $launch_info['consumer_domain'] = lti_tool_provider_retrieve_consumer_domain($oauth_consumer_key);
-  if (!empty($launch_info['user_id'])) {
+  if (!empty($launch_info['lis_person_contact_email_primary'])) {
+    $lti_user = $launch_info['lis_person_contact_email_primary'];
+  }
+  elseif (!empty($launch_info['user_id'])) {
     $lti_user = $launch_info['user_id'] . $launch_info['consumer_domain'];
   }
   else {
